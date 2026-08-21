@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# mutmut, import-linter
+mutants/
+.import_linter_cache/
+
+# terraform runs of the examples
+.terraform/
+*.tfstate
+*.tfstate.*
+tfplan
+tfplan.json
