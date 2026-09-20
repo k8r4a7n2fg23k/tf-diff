@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tf-diff.example.com/schema/report-v1.json",
+  "title": "tf-diff report, schema version 1",
+  "type": "object",
+  "required": ["schema_version", "tool", "plan", "environment", "summary", "warnings", "findings", "changes", "ignored"],
+  "additionalProperties": false,
+  "$defs": {
+    "severity": {"enum": ["info", "low", "medium", "high", "critical"]},
+    "confidence": {"enum": ["low", "high"]},
+    "action": {"enum": ["no-op", "create", "read", "update", "delete", "replace", "forget"]},
+    "value": {
+      "type": "object",
+      "required": ["state", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "state": {"enum": ["known", "unknown", "null", "sensitive"]},
+        "value": {"type": ["string", "number", "boolean", "null"]}
+      },
+      "if": {"properties": {"state": {"enum": ["unknown", "null", "sensitive"]}}},
+      "then": {"properties": {"value": {"type": "null"}}}
+    },
+    "addresses": {"type": "array", "items": {"type": "string"}},
+    "finding": {
+      "type": "object",
+      "required": ["rule", "severity", "resource", "title", "reason", "confidence", "evidence"],
+      "additionalProperties": false,
+      "properties": {
+        "rule": {"type": "string"},
+        "severity": {"$ref": "#/$defs/severity"},
+        "resource": {"type": "string"},
+        "title": {"type": "string"},
+        "reason": {"type": "string"},
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "text"],
+            "additionalProperties": false,
+            "properties": {"label": {"type": "string"}, "text": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "change": {
+      "type": "object",
+      "required": ["address", "type", "mode", "provider", "deposed", "action", "actions", "environment", "why", "attributes", "dependencies", "blast_radius", "score", "findings"],
+      "additionalProperties": false,
+      "properties": {
+        "address": {"type": "string"},
+        "type": {"type": "string"},
+        "mode": {"type": "string"},
+        "provider": {"type": "string"},
+        "deposed": {"type": ["string", "null"]},
+        "action": {"$ref": "#/$defs/action"},
+        "actions": {"type": "array", "items": {"type": "string"}},
+        "environment": {"type": ["string", "null"]},
+        "why": {"type": "array", "items": {"type": "string"}},
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "kind", "before", "after", "forces_replacement"],
+            "additionalProperties": false,
+            "properties": {
+              "path": {"type": "string"},
+              "kind": {"enum": ["added", "removed", "modified", "unknown", "sensitive"]},
+              "before": {"$ref": "#/$defs/value"},
+              "after": {"$ref": "#/$defs/value"},
+              "forces_replacement": {"type": "boolean"}
+            }
+          }
+        },
+        "dependencies": {"$ref": "#/$defs/addresses"},
+        "blast_radius": {
+          "type": "object",
+          "required": ["direct", "indirect"],
+          "additionalProperties": false,
+          "properties": {"direct": {"$ref": "#/$defs/addresses"}, "indirect": {"$ref": "#/$defs/addresses"}}
+        },
+        "score": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["value", "confidence", "factors"],
+              "additionalProperties": false,
+              "properties": {
+                "value": {"type": "integer", "minimum": 0, "maximum": 100},
+                "confidence": {"$ref": "#/$defs/confidence"},
+                "factors": {"type": "array", "items": {"type": "string"}}
+              }
+            }
+          ]
+        },
+        "findings": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "1"},
+    "tool": {
+      "type": "object",
+      "required": ["name", "version", "rules_version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"const": "tf-diff"},
+        "version": {"type": "string"},
+        "rules_version": {"type": "string"}
+      }
+    },
+    "plan": {
+      "type": "object",
+      "required": ["format_version", "terraform_version"],
+      "additionalProperties": false,
+      "properties": {
+        "format_version": {"type": "string"},
+        "terraform_version": {"type": ["string", "null"]}
+      }
+    },
+    "environment": {"type": ["string", "null"]},
+    "summary": {
+      "type": "object",
+      "required": ["resources", "changed", "ignored", "actions", "risk"],
+      "additionalProperties": false,
+      "properties": {
+        "resources": {"type": "integer", "minimum": 0},
+        "changed": {"type": "integer", "minimum": 0},
+        "ignored": {"type": "integer", "minimum": 0},
+        "actions": {
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/action"},
+          "additionalProperties": {"type": "integer", "minimum": 1}
+        },
+        "risk": {
+          "type": "object",
+          "required": ["critical", "high", "medium", "low", "info"],
+          "additionalProperties": false,
+          "properties": {
+            "critical": {"type": "integer", "minimum": 0},
+            "high": {"type": "integer", "minimum": 0},
+            "medium": {"type": "integer", "minimum": 0},
+            "low": {"type": "integer", "minimum": 0},
+            "info": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "changes": {"type": "array", "items": {"$ref": "#/$defs/change"}},
+    "ignored": {"$ref": "#/$defs/addresses"}
+  }
+}
