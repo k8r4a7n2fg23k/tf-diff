@@ -1,0 +1,75 @@
+{
+  "schema_version": "1",
+  "tool": {
+    "name": "tf-diff",
+    "version": "0.1.0",
+    "rules_version": "1"
+  },
+  "plan": {
+    "format_version": "1.9",
+    "terraform_version": "1.99.0"
+  },
+  "environment": null,
+  "summary": {
+    "resources": 1,
+    "changed": 1,
+    "ignored": 0,
+    "actions": {
+      "update": 1
+    },
+    "risk": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "warnings": [
+    "plan format 1.9 is newer than tested 1.2: unknown fields are ignored",
+    "plan is incomplete (deferred changes): more changes follow next run",
+    "plan has no configuration: dependency graph is empty",
+    "no environment: nothing sets it and no resource has an Environment or env tag, so production-only checks are off; set --environment"
+  ],
+  "findings": [],
+  "changes": [
+    {
+      "address": "aws_lb.web",
+      "type": "aws_lb",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": null,
+      "why": [
+        "1 attribute(s) change: idle_timeout"
+      ],
+      "attributes": [
+        {
+          "path": "idle_timeout",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": 60
+          },
+          "after": {
+            "state": "known",
+            "value": 30
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    }
+  ],
+  "ignored": []
+}

@@ -1,0 +1,575 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "tf-diff",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "rules": [
+            {
+              "id": "backup-disabled",
+              "name": "backup-disabled",
+              "shortDescription": {
+                "text": "Backup retention, final snapshot or point-in-time recovery is turned off"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "destroy-production-resource",
+              "name": "destroy-production-resource",
+              "shortDescription": {
+                "text": "Resource deleted in production"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "encryption-disabled",
+              "name": "encryption-disabled",
+              "shortDescription": {
+                "text": "Encryption flag goes from true to false"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "public-database",
+              "name": "public-database",
+              "shortDescription": {
+                "text": "RDS instance becomes publicly accessible"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "reduce-capacity",
+              "name": "reduce-capacity",
+              "shortDescription": {
+                "text": "Capacity attribute drops by the threshold percent or more"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "remove-redundancy",
+              "name": "remove-redundancy",
+              "shortDescription": {
+                "text": "Zone or subnet spread falls to one, or Multi-AZ is turned off"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "replace-resource",
+              "name": "replace-resource",
+              "shortDescription": {
+                "text": "Resource is destroyed and recreated (medium in production, low elsewhere)"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "stateful-data-loss",
+              "name": "stateful-data-loss",
+              "shortDescription": {
+                "text": "Data store is deleted or replaced: critical in production, high elsewhere; one step lower when a final snapshot or deletion guard keeps the data"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "s3-public-access-weakened",
+              "name": "s3-public-access-weakened",
+              "shortDescription": {
+                "text": "S3 public access block is turned off or deleted"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "security-group-wide-open",
+              "name": "security-group-wide-open",
+              "shortDescription": {
+                "text": "Security group ingress newly open to 0.0.0.0/0 or ::/0 (critical on admin/database ports)"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "sensitive-value-changed",
+              "name": "sensitive-value-changed",
+              "shortDescription": {
+                "text": "Sensitive attribute changes (the value is never shown)"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "security-severity": "1.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "wide-blast-radius",
+              "name": "wide-blast-radius",
+              "shortDescription": {
+                "text": "Destroyed or replaced resource has many dependents"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "destroy-production-resource",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "aws_s3_bucket.audit_logs: Production resource destroyed. aws_s3_bucket is deleted in a production environment"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_s3_bucket.audit_logs",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "f83cb0f806e1e3a95d6902d9474966deb531b6f22d13dbbaf75312c52b02e25f"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: DELETE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "terraform reason: delete_because_no_resource_config"
+            ]
+          }
+        },
+        {
+          "ruleId": "stateful-data-loss",
+          "ruleIndex": 7,
+          "level": "error",
+          "message": {
+            "text": "aws_s3_bucket.audit_logs: Data store deleted. aws_s3_bucket holds data; it is removed, existing data is lost"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_s3_bucket.audit_logs",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "db50de631000d3115f30bace422cdcd5aacc030ba4ebbe0dfa7daea3a303d56f"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: DELETE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "terraform reason: delete_because_no_resource_config"
+            ]
+          }
+        },
+        {
+          "ruleId": "security-group-wide-open",
+          "ruleIndex": 9,
+          "level": "error",
+          "message": {
+            "text": "aws_security_group.bastion: Ingress opened to the internet. 1 ingress rule(s) newly open to 0.0.0.0/0"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_security_group.bastion",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "8c2d4f47b05b08ce6ea7ca3af84972f59c75ea04d7c817808a47fbea382fffcf"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 2 direct, 0 indirect",
+              "ingress: tcp ports 22-22 from 0.0.0.0/0"
+            ]
+          }
+        },
+        {
+          "ruleId": "public-database",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "module.analytics.aws_db_instance.reporting: Database becomes publicly accessible. publicly_accessible turns on: the endpoint resolves to a public IP"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.analytics.aws_db_instance.reporting",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "69d609fdfee1b9c4ceb3d9a35a43f66fe93a6010c32189b05bf9a797a768c799"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "publicly_accessible: false -> true"
+            ]
+          }
+        },
+        {
+          "ruleId": "stateful-data-loss",
+          "ruleIndex": 7,
+          "level": "error",
+          "message": {
+            "text": "module.database.aws_db_instance.primary: Data store replaced. aws_db_instance holds data; storage_type forces a new one, existing data is lost"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.database.aws_db_instance.primary",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "9b3921aa76221c1b19200a5414a17e1f2c798b6fd610c814959e47140ccd15fd"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 1 indirect",
+              "storage_type: \"gp2\" -> \"io2\""
+            ]
+          }
+        },
+        {
+          "ruleId": "remove-redundancy",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "aws_autoscaling_group.web: Redundancy removed. availability_zones drops from 3 entries to 1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "aws_autoscaling_group.web",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "a3eceb3f98c5afda599c22969ea9e748d366350f9698e90cc3cc53fb013738be"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "availability_zones: 3 -> 1"
+            ]
+          }
+        },
+        {
+          "ruleId": "reduce-capacity",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "module.api.aws_ecs_service.api: Capacity reduced. desired_count drops by 67% (threshold 30%)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.api.aws_ecs_service.api",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "6c35b51934ffd379743711f54a0f59858711f6f3abea45045f760409d11b8072"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "desired_count: 6 -> 2"
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.database.aws_db_instance.primary: Resource replaced. storage_type cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.database.aws_db_instance.primary",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "8d98d6498917bad55341b8e540bc97b1d358d48112b54289aff366ac90ff381d"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 1 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "storage_type: \"gp2\" -> \"io2\""
+            ]
+          }
+        },
+        {
+          "ruleId": "sensitive-value-changed",
+          "ruleIndex": 10,
+          "level": "note",
+          "message": {
+            "text": "module.database.aws_db_instance.primary: Sensitive value changes. a secret or credential changes; dependents must pick up the new value"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.database.aws_db_instance.primary",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "f2fe2bec8ebab9af731eec403d2caa311d2e682641b4766778eb34f79d216a73"
+          },
+          "properties": {
+            "severity": "info",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 1 indirect",
+              "paths: password"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

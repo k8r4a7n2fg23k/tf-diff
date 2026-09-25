@@ -1,0 +1,10 @@
+Terraform Semantic Diff
+────────────────────────────────────────────────────────────────────────
+Environment   not set (resource tags decide)
+Terraform     1.16.0 (plan format 1.2)
+Resources     0 inspected, 0 changed, 0 ignored
+Changes       none
+Risk          0 critical, 0 high, 0 medium, 0 low, 0 info
+────────────────────────────────────────────────────────────────────────
+
+No changes.

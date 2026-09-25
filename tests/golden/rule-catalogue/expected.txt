@@ -1,0 +1,639 @@
+Terraform Semantic Diff
+────────────────────────────────────────────────────────────────────────
+Environment   not set (resource tags decide)
+Terraform     1.16.0 (plan format 1.2)
+Resources     54 inspected, 54 changed, 0 ignored
+Changes       17 create, 24 update, 4 delete, 8 replace, 1 forget
+Risk          16 critical, 21 high, 2 medium, 7 low, 1 info
+warning: resources are tagged for different environments (production, staging): untagged ones get none, set --environment
+────────────────────────────────────────────────────────────────────────
+
+CRITICAL aws_db_instance.engine_swap
+  action        REPLACE (delete, create)
+  why           the provider cannot update it in place
+  why           engine, storage.type forces replacement
+  why           2 attribute(s) change: api_token, password
+  blast radius  0 direct, 0 indirect
+  score         85/100, confidence high
+                +60 critical finding (stateful-data-loss)
+                +15 replace: the old object is destroyed
+                +10 production
+  CRITICAL stateful-data-loss  Data store replaced
+             aws_db_instance holds data; engine, storage.type forces a new one, existing data is lost
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             engine: "mysql" -> "postgres"
+  MEDIUM   replace-resource  Resource replaced
+             engine, storage.type cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+             engine: "mysql" -> "postgres"
+  INFO     sensitive-value-changed  Sensitive value changes
+             a secret or credential changes; dependents must pick up the new value
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             paths: api_token, password
+
+CRITICAL aws_db_instance.exposed
+  action        UPDATE
+  why           1 attribute(s) change: publicly_accessible
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence high
+                +60 critical finding (public-database)
+  CRITICAL public-database  Database becomes publicly accessible
+             publicly_accessible turns on: the endpoint resolves to a public IP
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             publicly_accessible: false -> true
+
+CRITICAL aws_ebs_volume.plain
+  action        UPDATE
+  why           2 attribute(s) change: a_size, encrypted
+  blast radius  0 direct, 0 indirect
+  score         70/100, confidence high
+                +60 critical finding (encryption-disabled)
+                +10 production
+  CRITICAL encryption-disabled  Encryption disabled
+             encrypted turns off
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             encrypted: true -> false
+
+CRITICAL aws_efs_file_system.pending
+  action        UPDATE
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence low
+                +60 critical finding (encryption-disabled)
+  CRITICAL encryption-disabled  Encryption may be disabled
+             encrypted is unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             encrypted: true -> (known after apply)
+
+CRITICAL aws_rds_cluster_instance.pending_exposure
+  action        UPDATE
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence low
+                +60 critical finding (public-database)
+  CRITICAL public-database  Database may become public
+             publicly_accessible is unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             publicly_accessible: false -> (known after apply)
+
+CRITICAL aws_s3_bucket.archive
+  action        DELETE
+  why           the resource was removed from configuration
+  blast radius  0 direct, 0 indirect
+  score         85/100, confidence high
+                +60 critical finding (destroy-production-resource)
+                +15 delete: the old object is destroyed
+                +10 production
+  CRITICAL destroy-production-resource  Production resource destroyed
+             aws_s3_bucket is deleted in a production environment
+             confidence high
+             action: DELETE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             terraform reason: delete_because_no_resource_config
+  CRITICAL stateful-data-loss  Data store deleted
+             aws_s3_bucket holds data; it is removed, existing data is lost
+             confidence high
+             action: DELETE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             terraform reason: delete_because_no_resource_config
+
+CRITICAL aws_s3_bucket.unexplained_delete
+  action        DELETE
+  blast radius  0 direct, 0 indirect
+  score         85/100, confidence high
+                +60 critical finding (destroy-production-resource)
+                +15 delete: the old object is destroyed
+                +10 production
+  CRITICAL destroy-production-resource  Production resource destroyed
+             aws_s3_bucket is deleted in a production environment
+             confidence high
+             action: DELETE
+             environment: production
+             dependents: 0 direct, 0 indirect
+  CRITICAL stateful-data-loss  Data store deleted
+             aws_s3_bucket holds data; it is removed, existing data is lost
+             confidence high
+             action: DELETE
+             environment: production
+             dependents: 0 direct, 0 indirect
+
+CRITICAL aws_security_group.mixed_sources
+  action        UPDATE
+  why           4 attribute(s) change: ingress[0].from_port, ingress[0].ipv6_cidr_blocks[0], ingress[0].protocol, ingress[0].to_port
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence low
+                +60 critical finding (security-group-wide-open)
+  CRITICAL security-group-wide-open  Ingress opened to the internet
+             1 ingress rule(s) newly open to ::/0
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             ingress: tcp ports 22-22 from ::/0
+  CRITICAL security-group-wide-open  Ingress may open to the internet
+             1 ingress rule(s) newly open to (known after apply)
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             ingress: tcp ports 22-22 from (known after apply)
+
+CRITICAL aws_security_group.pending_cidr
+  action        UPDATE
+  why           3 attribute(s) change: ingress[0].from_port, ingress[0].protocol, ingress[0].to_port
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence low
+                +60 critical finding (security-group-wide-open)
+  CRITICAL security-group-wide-open  Ingress may open to the internet
+             1 ingress rule(s) newly open to (known after apply)
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             ingress: tcp ports 3389-3389 from (known after apply)
+
+CRITICAL aws_security_group.web
+  action        UPDATE
+  why           8 attribute(s) change: ingress[0].cidr_blocks[0], ingress[0].from_port, ingress[0].protocol, ingress[0].to_port, ingress[1].from_port and 3 more
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence high
+                +60 critical finding (security-group-wide-open)
+  CRITICAL security-group-wide-open  Ingress opened to the internet
+             2 ingress rule(s) newly open to 0.0.0.0/0, ::/0
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             ingress: tcp ports 22-22 from 0.0.0.0/0
+             ingress: tcp ports 8080-8080 from ::/0
+
+CRITICAL aws_security_group_rule.everything
+  action        CREATE
+  why           new resource
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence high
+                +60 critical finding (security-group-wide-open)
+  CRITICAL security-group-wide-open  Ingress opened to the internet
+             1 ingress rule(s) newly open to 0.0.0.0/0
+             confidence high
+             action: CREATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             ingress: -1 ports all from 0.0.0.0/0
+
+CRITICAL aws_security_group_rule.pending_protocol
+  action        CREATE
+  why           new resource
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence low
+                +60 critical finding (security-group-wide-open)
+  CRITICAL security-group-wide-open  Ingress may open to the internet
+             1 ingress rule(s) newly open to 0.0.0.0/0
+             confidence low
+             action: CREATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             ingress: ? ports 22-22 from 0.0.0.0/0
+
+CRITICAL aws_vpc_security_group_ingress_rule.postgres
+  action        CREATE
+  why           new resource
+  blast radius  0 direct, 0 indirect
+  score         60/100, confidence high
+                +60 critical finding (security-group-wide-open)
+  CRITICAL security-group-wide-open  Ingress opened to the internet
+             1 ingress rule(s) newly open to 0.0.0.0/0
+             confidence high
+             action: CREATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             ingress: tcp ports 5432-5432 from 0.0.0.0/0
+
+HIGH     aws_autoscaling_group.mixed_capacity
+  action        UPDATE
+  why           3 attribute(s) change: a, desired_count, min_size
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence low
+                +40 high finding (reduce-capacity)
+  HIGH     reduce-capacity  Capacity may drop
+             desired_capacity is unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             desired_capacity: 4 -> (known after apply)
+  HIGH     reduce-capacity  Capacity reduced
+             min_size drops by 80% (threshold 30%)
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             min_size: 10 -> 2
+
+HIGH     aws_autoscaling_group.one_zone
+  action        UPDATE
+  why           2 attribute(s) change: availability_zones[1], availability_zones[2]
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence high
+                +40 high finding (remove-redundancy)
+  HIGH     remove-redundancy  Redundancy removed
+             availability_zones drops from 3 entries to 1
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             availability_zones: 3 -> 1
+
+HIGH     aws_autoscaling_group.pending_size
+  action        UPDATE
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence low
+                +40 high finding (reduce-capacity)
+  HIGH     reduce-capacity  Capacity may drop
+             min_size is unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             min_size: 4 -> (known after apply)
+
+HIGH     aws_autoscaling_group.second_list
+  action        UPDATE
+  why           1 attribute(s) change: subnet_ids[1]
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence high
+                +40 high finding (remove-redundancy)
+  HIGH     remove-redundancy  Redundancy removed
+             subnet_ids drops from 2 entries to 1
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             subnet_ids: 2 -> 1
+
+HIGH     aws_db_instance.no_backups
+  action        UPDATE
+  why           1 attribute(s) change: backup_retention_period
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence high
+                +40 high finding (backup-disabled)
+  HIGH     backup-disabled  Backups disabled
+             backup_retention_period removes the way back after data loss
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             backup_retention_period: 7 -> 0
+
+HIGH     aws_db_instance.pending_az
+  action        UPDATE
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence low
+                +40 high finding (remove-redundancy)
+  HIGH     remove-redundancy  Multi-AZ may be disabled
+             multi_az is unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             multi_az: true -> (known after apply)
+
+HIGH     aws_db_instance.pending_backups
+  action        UPDATE
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence low
+                +40 high finding (backup-disabled)
+  HIGH     backup-disabled  Backups may be disabled
+             backup_retention_period is unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             backup_retention_period: 7 -> (known after apply)
+
+HIGH     aws_db_instance.single_az
+  action        UPDATE
+  why           1 attribute(s) change: multi_az
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence high
+                +40 high finding (remove-redundancy)
+  HIGH     remove-redundancy  Multi-AZ disabled
+             multi_az turns off
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             multi_az: true -> false
+
+HIGH     aws_dynamodb_table.no_pitr
+  action        UPDATE
+  why           1 attribute(s) change: point_in_time_recovery[0].enabled
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence high
+                +40 high finding (backup-disabled)
+  HIGH     backup-disabled  Backups disabled
+             point_in_time_recovery[0].enabled removes the way back after data loss
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             point_in_time_recovery[0].enabled: true -> false
+
+HIGH     aws_dynamodb_table.tainted
+  action        REPLACE (delete, create)
+  why           the resource is tainted
+  blast radius  0 direct, 0 indirect
+  score         55/100, confidence high
+                +40 high finding (stateful-data-loss)
+                +15 replace: the old object is destroyed
+  HIGH     stateful-data-loss  Data store replaced
+             aws_dynamodb_table holds data; Terraform plans a new one, existing data is lost
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 0 direct, 0 indirect
+  LOW      replace-resource  Resource replaced
+             Terraform plans replacement (replace_because_tainted)
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+
+HIGH     aws_ebs_volume.data
+  action        REPLACE (delete, create)
+  why           size forces replacement
+  blast radius  0 direct, 0 indirect
+  score         55/100, confidence high
+                +40 high finding (stateful-data-loss)
+                +15 replace: the old object is destroyed
+  HIGH     stateful-data-loss  Data store replaced
+             aws_ebs_volume holds data; size forces a new one, existing data is lost
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             size: 100 -> 50
+  LOW      replace-resource  Resource replaced
+             size cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+             size: 100 -> 50
+
+HIGH     aws_ecs_service.shrink
+  action        UPDATE
+  why           1 attribute(s) change: desired_count
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence high
+                +40 high finding (reduce-capacity)
+  HIGH     reduce-capacity  Capacity reduced
+             desired_count drops by 70% (threshold 30%)
+             confidence high
+             action: UPDATE
+             environment: staging
+             dependents: 0 direct, 0 indirect
+             desired_count: 10 -> 3
+
+HIGH     aws_eks_node_group.pending_subnets
+  action        UPDATE
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence low
+                +40 high finding (remove-redundancy)
+  HIGH     remove-redundancy  Redundancy may drop
+             subnet_ids spans 2 entries now and is unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             subnet_ids: 2 -> (known after apply)
+
+HIGH     aws_eks_node_group.unknown_then_drop
+  action        UPDATE
+  why           1 attribute(s) change: subnet_ids[1]
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence low
+                +40 high finding (remove-redundancy)
+  HIGH     remove-redundancy  Redundancy may drop
+             availability_zones spans 2 entries now and is unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             availability_zones: 2 -> (known after apply)
+  HIGH     remove-redundancy  Redundancy removed
+             subnet_ids drops from 2 entries to 1
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             subnet_ids: 2 -> 1
+
+HIGH     aws_rds_cluster.no_snapshot
+  action        UPDATE
+  why           1 attribute(s) change: skip_final_snapshot
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence high
+                +40 high finding (backup-disabled)
+  HIGH     backup-disabled  Backups disabled
+             skip_final_snapshot removes the way back after data loss
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             skip_final_snapshot: false -> true
+
+HIGH     aws_s3_account_public_access_block.pending
+  action        UPDATE
+  why           1 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence low
+                +40 high finding (s3-public-access-weakened)
+  HIGH     s3-public-access-weakened  S3 public access block may weaken
+             1 public access guard(s) unknown until apply
+             confidence low
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             restrict_public_buckets: true -> (known after apply)
+
+HIGH     aws_s3_bucket_public_access_block.flag_off
+  action        UPDATE
+  why           1 attribute(s) change: block_public_acls
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence high
+                +40 high finding (s3-public-access-weakened)
+  HIGH     s3-public-access-weakened  S3 public access block weakened
+             1 public access guard(s) turn off
+             confidence high
+             action: UPDATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             block_public_acls: true -> false
+
+HIGH     aws_s3_bucket_public_access_block.removed
+  action        DELETE
+  blast radius  0 direct, 0 indirect
+  score         55/100, confidence high
+                +40 high finding (s3-public-access-weakened)
+                +15 delete: the old object is destroyed
+  HIGH     s3-public-access-weakened  S3 public access block removed
+             deleting the block lets bucket policies and ACLs make data public
+             confidence high
+             action: DELETE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             resource: aws_s3_bucket_public_access_block
+
+HIGH     aws_security_group_rule.pending_port
+  action        CREATE
+  why           new resource
+  blast radius  0 direct, 0 indirect
+  score         40/100, confidence low
+                +40 high finding (security-group-wide-open)
+  HIGH     security-group-wide-open  Ingress may open to the internet
+             1 ingress rule(s) newly open to 0.0.0.0/0
+             confidence low
+             action: CREATE
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             ingress: tcp ports 22-? from 0.0.0.0/0
+
+MEDIUM   aws_vpc.main
+  action        REPLACE (delete, create)
+  why           cidr_block forces replacement
+  blast radius  12 direct, 0 indirect
+  score         55/100, confidence high
+                +25 medium finding (wide-blast-radius)
+                +15 replace: the old object is destroyed
+                +15 12 dependent resource(s)
+  MEDIUM   wide-blast-radius  Wide blast radius
+             12 resources depend on it (threshold 5)
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 12 direct, 0 indirect
+             affected: aws_subnet.part[0], aws_subnet.part[10], aws_subnet.part[11], aws_subnet.part[1], aws_subnet.part[2], aws_subnet.part[3], aws_subnet.part[4], aws_subnet.part[5], aws_subnet.part[6], aws_subnet.part[7] and 2 more
+  LOW      replace-resource  Resource replaced
+             cidr_block cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 12 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+             cidr_block: "10.0.0.0/16" -> "10.1.0.0/16"
+
+LOW      aws_instance.novel
+  action        REPLACE (delete, create)
+  why           replace_because_of_a_future_terraform_reason
+  blast radius  0 direct, 0 indirect
+  score         25/100, confidence high
+                +10 low finding (replace-resource)
+                +15 replace: the old object is destroyed
+  LOW      replace-resource  Resource replaced
+             Terraform plans replacement (replace_because_of_a_future_terraform_reason)
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+
+LOW      aws_instance.requested
+  action        REPLACE (create, delete)
+  why           replacement was requested with -replace
+  why           create_before_destroy: the new object exists before the old one goes
+  blast radius  0 direct, 0 indirect
+  score         25/100, confidence high
+                +10 low finding (replace-resource)
+                +15 replace: the old object is destroyed
+  LOW      replace-resource  Resource replaced
+             Terraform plans replacement (replace_by_request)
+             confidence high
+             action: REPLACE (create, delete)
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             order: create before destroy
+
+LOW      aws_instance.unexplained
+  action        REPLACE (delete, create)
+  blast radius  0 direct, 0 indirect
+  score         25/100, confidence high
+                +10 low finding (replace-resource)
+                +15 replace: the old object is destroyed
+  LOW      replace-resource  Resource replaced
+             Terraform plans replacement (no reason given)
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+
+LOW      aws_lb.computed_subnets
+  action        REPLACE (delete, create)
+  why           name forces replacement
+  why           2 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         25/100, confidence high
+                +10 low finding (replace-resource)
+                +15 replace: the old object is destroyed
+  LOW      replace-resource  Resource replaced
+             name cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+             name: "old" -> "new"
+
+Other changes
+  forget   aws_instance.forgotten
+  update   aws_lb.busy
+  update   aws_lb.five
+  delete   aws_s3_bucket.archive (deposed 0a1b2c3d)
+  create   aws_security_group_rule.egress
+  create   aws_subnet.part[0]
+  create   aws_subnet.part[10]
+  create   aws_subnet.part[11]
+  create   aws_subnet.part[1]
+  create   aws_subnet.part[2]
+  create   aws_subnet.part[3]
+  create   aws_subnet.part[4]
+  create   aws_subnet.part[5]
+  create   aws_subnet.part[6]
+  create   aws_subnet.part[7]
+  create   aws_subnet.part[8]
+  create   aws_subnet.part[9]

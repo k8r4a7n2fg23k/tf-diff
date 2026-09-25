@@ -1,0 +1,1302 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.16.0",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket_public_access_block.flag_off",
+      "mode": "managed",
+      "type": "aws_s3_bucket_public_access_block",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "block_public_acls": true,
+          "block_public_policy": true
+        },
+        "after": {
+          "block_public_acls": false,
+          "block_public_policy": true
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_s3_bucket_public_access_block.removed",
+      "mode": "managed",
+      "type": "aws_s3_bucket_public_access_block",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "block_public_acls": true
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": false
+      }
+    },
+    {
+      "address": "aws_s3_account_public_access_block.pending",
+      "mode": "managed",
+      "type": "aws_s3_account_public_access_block",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "restrict_public_buckets": true,
+          "ignore_public_acls": true
+        },
+        "after": {
+          "ignore_public_acls": true
+        },
+        "after_unknown": {
+          "restrict_public_buckets": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_ebs_volume.plain",
+      "mode": "managed",
+      "type": "aws_ebs_volume",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "a_size": 10,
+          "encrypted": true,
+          "tags": {
+            "Environment": "production"
+          }
+        },
+        "after": {
+          "a_size": 20,
+          "encrypted": false,
+          "tags": {
+            "Environment": "production"
+          }
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_efs_file_system.pending",
+      "mode": "managed",
+      "type": "aws_efs_file_system",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "encrypted": true
+        },
+        "after": {},
+        "after_unknown": {
+          "encrypted": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_db_instance.no_backups",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "backup_retention_period": 7
+        },
+        "after": {
+          "backup_retention_period": 0
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_rds_cluster.no_snapshot",
+      "mode": "managed",
+      "type": "aws_rds_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "skip_final_snapshot": false
+        },
+        "after": {
+          "skip_final_snapshot": true
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_dynamodb_table.no_pitr",
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "point_in_time_recovery": [
+            {
+              "enabled": true
+            }
+          ]
+        },
+        "after": {
+          "point_in_time_recovery": [
+            {
+              "enabled": false
+            }
+          ]
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_db_instance.pending_backups",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "backup_retention_period": 7
+        },
+        "after": {},
+        "after_unknown": {
+          "backup_retention_period": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_ecs_service.shrink",
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "desired_count": 10,
+          "tags_all": {
+            "env": "staging"
+          }
+        },
+        "after": {
+          "desired_count": 3,
+          "tags_all": {
+            "env": "staging"
+          }
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.pending_size",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "min_size": 4
+        },
+        "after": {},
+        "after_unknown": {
+          "min_size": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.one_zone",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "availability_zones": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        "after": {
+          "availability_zones": [
+            "a"
+          ]
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_db_instance.single_az",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "multi_az": true
+        },
+        "after": {
+          "multi_az": false
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_eks_node_group.pending_subnets",
+      "mode": "managed",
+      "type": "aws_eks_node_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "subnet_ids": [
+            "subnet-1",
+            "subnet-2"
+          ]
+        },
+        "after": {},
+        "after_unknown": {
+          "subnet_ids": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_security_group.web",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "ingress": []
+        },
+        "after": {
+          "ingress": [
+            {
+              "protocol": "tcp",
+              "from_port": 22,
+              "to_port": 22,
+              "cidr_blocks": [
+                "0.0.0.0/0"
+              ]
+            },
+            {
+              "protocol": "tcp",
+              "from_port": 8080,
+              "to_port": 8080,
+              "cidr_blocks": [],
+              "ipv6_cidr_blocks": [
+                "::/0"
+              ]
+            }
+          ]
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_security_group_rule.everything",
+      "mode": "managed",
+      "type": "aws_security_group_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "type": "ingress",
+          "protocol": "-1",
+          "from_port": 0,
+          "to_port": 0,
+          "cidr_blocks": [
+            "0.0.0.0/0"
+          ]
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_vpc_security_group_ingress_rule.postgres",
+      "mode": "managed",
+      "type": "aws_vpc_security_group_ingress_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "ip_protocol": "tcp",
+          "from_port": 5432,
+          "to_port": 5432,
+          "cidr_ipv4": "0.0.0.0/0"
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_security_group_rule.pending_protocol",
+      "mode": "managed",
+      "type": "aws_security_group_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "type": "ingress",
+          "from_port": 22,
+          "to_port": 22,
+          "cidr_blocks": [
+            "0.0.0.0/0"
+          ]
+        },
+        "after_unknown": {
+          "protocol": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_security_group.pending_cidr",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "ingress": []
+        },
+        "after": {
+          "ingress": [
+            {
+              "protocol": "tcp",
+              "from_port": 3389,
+              "to_port": 3389
+            }
+          ]
+        },
+        "after_unknown": {
+          "ingress": [
+            {
+              "cidr_blocks": true
+            }
+          ]
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_security_group_rule.egress",
+      "mode": "managed",
+      "type": "aws_security_group_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "type": "egress",
+          "protocol": "-1",
+          "from_port": 0,
+          "to_port": 0,
+          "cidr_blocks": [
+            "0.0.0.0/0"
+          ]
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_db_instance.exposed",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "publicly_accessible": false
+        },
+        "after": {
+          "publicly_accessible": true
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_rds_cluster_instance.pending_exposure",
+      "mode": "managed",
+      "type": "aws_rds_cluster_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "publicly_accessible": false
+        },
+        "after": {},
+        "after_unknown": {
+          "publicly_accessible": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_instance.requested",
+      "mode": "managed",
+      "type": "aws_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create",
+          "delete"
+        ],
+        "before": {
+          "ami": "ami-1"
+        },
+        "after": {
+          "ami": "ami-1"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      },
+      "action_reason": "replace_by_request"
+    },
+    {
+      "address": "aws_instance.unexplained",
+      "mode": "managed",
+      "type": "aws_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "before": {
+          "ami": "ami-1"
+        },
+        "after": {
+          "ami": "ami-1"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_db_instance.engine_swap",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "before": {
+          "api_token": "CANARY-a",
+          "engine": "mysql",
+          "password": "CANARY-old",
+          "tags": {
+            "Environment": "production"
+          }
+        },
+        "after": {
+          "api_token": "CANARY-b",
+          "engine": "postgres",
+          "password": "CANARY-new",
+          "tags": {
+            "Environment": "production"
+          }
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {},
+        "replace_paths": [
+          [
+            "engine"
+          ],
+          [
+            "storage",
+            "type"
+          ]
+        ]
+      },
+      "action_reason": "replace_because_cannot_update"
+    },
+    {
+      "address": "aws_ebs_volume.data",
+      "mode": "managed",
+      "type": "aws_ebs_volume",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "before": {
+          "size": 100
+        },
+        "after": {
+          "size": 50
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {},
+        "replace_paths": [
+          [
+            "size"
+          ]
+        ]
+      }
+    },
+    {
+      "address": "aws_s3_bucket.archive",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "bucket": "archive.example.com",
+          "tags": {
+            "Environment": "production"
+          }
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": false
+      },
+      "action_reason": "delete_because_no_resource_config"
+    },
+    {
+      "address": "aws_s3_bucket.archive",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "bucket": "archive.example.com",
+          "tags": {
+            "Environment": "production"
+          }
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": false
+      },
+      "deposed": "0a1b2c3d"
+    },
+    {
+      "address": "aws_instance.forgotten",
+      "mode": "managed",
+      "type": "aws_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "forget"
+        ],
+        "before": {
+          "ami": "ami-1"
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": false
+      }
+    },
+    {
+      "address": "aws_lb.busy",
+      "mode": "managed",
+      "type": "aws_lb",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "setting_0": 0,
+          "setting_1": 1,
+          "setting_2": 2,
+          "setting_3": 3,
+          "setting_4": 4,
+          "setting_5": 5,
+          "setting_6": 6
+        },
+        "after": {
+          "setting_0": 1,
+          "setting_1": 2,
+          "setting_2": 3,
+          "setting_3": 4,
+          "setting_4": 5,
+          "setting_5": 6,
+          "setting_6": 7
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_lb.five",
+      "mode": "managed",
+      "type": "aws_lb",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "setting_0": 0,
+          "setting_1": 1,
+          "setting_2": 2,
+          "setting_3": 3,
+          "setting_4": 4
+        },
+        "after": {
+          "setting_0": 1,
+          "setting_1": 2,
+          "setting_2": 3,
+          "setting_3": 4,
+          "setting_4": 5
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_s3_bucket.unexplained_delete",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "bucket": "tmp.example.com",
+          "tags": {
+            "Environment": "production"
+          }
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": false
+      }
+    },
+    {
+      "address": "aws_dynamodb_table.tainted",
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "before": {
+          "name": "orders"
+        },
+        "after": {
+          "name": "orders"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      },
+      "action_reason": "replace_because_tainted"
+    },
+    {
+      "address": "aws_instance.novel",
+      "mode": "managed",
+      "type": "aws_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "before": {
+          "ami": "ami-1"
+        },
+        "after": {
+          "ami": "ami-1"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      },
+      "action_reason": "replace_because_of_a_future_terraform_reason"
+    },
+    {
+      "address": "aws_security_group_rule.pending_port",
+      "mode": "managed",
+      "type": "aws_security_group_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "type": "ingress",
+          "protocol": "tcp",
+          "from_port": 22,
+          "cidr_blocks": [
+            "0.0.0.0/0"
+          ]
+        },
+        "after_unknown": {
+          "to_port": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_security_group.mixed_sources",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "ingress": []
+        },
+        "after": {
+          "ingress": [
+            {
+              "protocol": "tcp",
+              "from_port": 22,
+              "to_port": 22,
+              "ipv6_cidr_blocks": [
+                "::/0"
+              ]
+            }
+          ]
+        },
+        "after_unknown": {
+          "ingress": [
+            {
+              "cidr_blocks": true
+            }
+          ]
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.mixed_capacity",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "a": 1,
+          "desired_capacity": 4,
+          "desired_count": 5,
+          "min_size": 10
+        },
+        "after": {
+          "a": 2,
+          "min_size": 2
+        },
+        "after_unknown": {
+          "desired_capacity": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.second_list",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "availability_zones": [
+            "a"
+          ],
+          "subnet_ids": [
+            "s1",
+            "s2"
+          ]
+        },
+        "after": {
+          "availability_zones": [
+            "a"
+          ],
+          "subnet_ids": [
+            "s1"
+          ]
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_eks_node_group.unknown_then_drop",
+      "mode": "managed",
+      "type": "aws_eks_node_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "availability_zones": [
+            "a",
+            "b"
+          ],
+          "subnet_ids": [
+            "s1",
+            "s2"
+          ]
+        },
+        "after": {
+          "subnet_ids": [
+            "s1"
+          ]
+        },
+        "after_unknown": {
+          "availability_zones": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_db_instance.pending_az",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "multi_az": true
+        },
+        "after": {},
+        "after_unknown": {
+          "multi_az": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_lb.computed_subnets",
+      "mode": "managed",
+      "type": "aws_lb",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "before": {
+          "name": "old",
+          "subnets": [
+            "s1",
+            "s2"
+          ],
+          "multi_az": true
+        },
+        "after": {
+          "name": "new"
+        },
+        "after_unknown": {
+          "subnets": true,
+          "multi_az": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {},
+        "replace_paths": [
+          [
+            "name"
+          ]
+        ]
+      }
+    },
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "before": {
+          "cidr_block": "10.0.0.0/16"
+        },
+        "after": {
+          "cidr_block": "10.1.0.0/16"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {},
+        "replace_paths": [
+          [
+            "cidr_block"
+          ]
+        ]
+      }
+    },
+    {
+      "address": "aws_subnet.part[0]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 0
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[1]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 1
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[2]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 2
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[3]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 3
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[4]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 4
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[5]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 5
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[6]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 6
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[7]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 7
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[8]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 8
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[9]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 9
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[10]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 10
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_subnet.part[11]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "index": 11
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "configuration": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "main"
+        },
+        {
+          "address": "aws_lb.computed_subnets",
+          "mode": "managed",
+          "type": "aws_lb",
+          "name": "computed_subnets",
+          "expressions": {
+            "name": {
+              "constant_value": "new"
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.part",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "part",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id",
+                "aws_vpc.main"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
