@@ -99,7 +99,7 @@ enable_error_code = [
     "possibly-undefined",
 ]
 plugins = ["pydantic.mypy"]
-files = ["src", "tests"]
+files = ["scripts", "src", "tests"]
 mypy_path = "tests"
 
 [tool.importlinter]
