@@ -1,4 +1,4 @@
-.PHONY: check fmt lint type arch test licenses mutate
+.PHONY: check fmt lint type arch test licenses mutate bench
 
 check: lint type arch test licenses
 
@@ -27,3 +27,6 @@ licenses:
 # Linux or WSL only: mutmut needs fork.
 mutate:
 	uv run mutmut run
+# docs/performance.md: run on an idle machine; the 50k plan needs about 1 GB of memory
+bench:
+	uv run python scripts/bench.py matrix --sizes 100,1000,10000,50000 --repeat 5
