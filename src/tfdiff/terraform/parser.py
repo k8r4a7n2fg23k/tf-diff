@@ -1,5 +1,6 @@
 """`terraform show -json` plan -> model.Plan. The only module that knows Terraform's JSON shape."""
 
+import gc
 import json
 import math
 import re
@@ -10,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue, ValidationError
 
 from tfdiff.model.errors import SHOWN_ERRORS, CompatibilityError, InputError
 from tfdiff.model.graph import build
-from tfdiff.model.plan import Action, Change, Plan, Resource
+from tfdiff.model.plan import QUIET, Action, Change, Plan, Resource
 from tfdiff.model.text import shortlist
 from tfdiff.model.values import (
     Attributes,
@@ -53,6 +54,8 @@ ACTIONS: dict[tuple[str, ...], Action] = {
 }
 # addresses a warning names before it says how many more
 EXAMPLES = 3
+# what a quiet change still has to say: the environment the plan is in
+TAG_KEYS = ("tags", "tags_all")
 
 
 class _Tolerant(BaseModel):
@@ -90,6 +93,18 @@ class RawPlan(_Tolerant):
 
 def parse(text: str) -> Plan:
     """Parse plan JSON; raises InputError (or CompatibilityError) and nothing else on bad input."""
+    # millions of new objects and no cycles among them: collection passes free nothing and took
+    # a third of the time on a 10k-resource plan
+    collecting = gc.isenabled()
+    gc.disable()
+    try:
+        return _parse(text)
+    finally:
+        if collecting:
+            gc.enable()
+
+
+def _parse(text: str) -> Plan:
     if len(text) > MAX_SIZE:
         raise InputError(f"plan is longer than {MAX_SIZE} characters")
     try:
@@ -216,6 +231,10 @@ def _change(raw: RawResourceChange, declared: dict[str, frozenset[str]]) -> Chan
     action = ACTIONS[actions]
     before, after = raw.change.before, raw.change.after
     unknown = raw.change.after_unknown
+    if action in QUIET:
+        # only known tags are read from them
+        before, after = _tags(raw.address, before), _tags(raw.address, after)
+        unknown = None
     return Change(
         resource=Resource(
             address=raw.address,
@@ -234,6 +253,12 @@ def _change(raw: RawResourceChange, declared: dict[str, frozenset[str]]) -> Chan
         deposed=raw.deposed,
         configured=declared.get(config_address(raw.address)),
     )
+
+
+def _tags(address: str, value: JsonValue) -> JsonValue:
+    if not isinstance(value, dict | None):
+        raise InputError(f"{address}: before/after must be an object or null")
+    return value and {key: value[key] for key in TAG_KEYS if key in value}
 
 
 def _attributes(

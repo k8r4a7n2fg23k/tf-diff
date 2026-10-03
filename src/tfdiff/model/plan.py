@@ -33,6 +33,7 @@ class Change:
     action: Action
     # raw order kept: ("create", "delete") is create_before_destroy, the derived Action loses it
     actions: tuple[str, ...]
+    # a no-op or read change keeps only its tags: nothing else of it is assessed
     before: Attributes
     after: Attributes
     replace_paths: tuple[Path, ...]
