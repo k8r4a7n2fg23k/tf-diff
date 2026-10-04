@@ -1,0 +1,25 @@
+environment = "production"
+zones       = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+# new subnet size: every subnet is replaced, so every id downstream is unknown until apply
+subnet_bits = 6
+
+db = {
+  multi_az       = true
+  encrypted      = true
+  backup_days    = 7
+  public         = false
+  skip_snapshot  = false
+  instance_class = "db.t3.medium"
+}
+
+web = {
+  desired = 6
+  min     = 3
+  zones   = 3
+}
+
+bucket_guarded   = true
+orders_pitr      = true
+volume_encrypted = true
+admin_cidr       = "10.0.0.0/8"
+lb_name          = "web"
