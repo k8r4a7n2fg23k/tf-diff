@@ -1,0 +1,1390 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.16.6",
+  "variables": {
+    "db_password": {
+      "value": "CANARY-rotated-password"
+    },
+    "legacy_cache": {
+      "value": false
+    },
+    "release": {
+      "value": "v2"
+    },
+    "storage_type": {
+      "value": "gp3"
+    },
+    "workers": {
+      "value": 1
+    },
+    "zones": {
+      "value": [
+        "zone-a",
+        "zone-b"
+      ]
+    }
+  },
+  "planned_values": {
+    "root_module": {
+      "child_modules": [
+        {
+          "resources": [
+            {
+              "address": "module.app.terraform_data.api",
+              "mode": "managed",
+              "type": "terraform_data",
+              "name": "api",
+              "provider_name": "terraform.io/builtin/terraform",
+              "schema_version": 0,
+              "values": {
+                "id": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+                "input": {
+                  "release": "v2"
+                },
+                "store": null,
+                "triggers_replace": null
+              },
+              "sensitive_values": {
+                "input": {},
+                "output": {}
+              }
+            },
+            {
+              "address": "module.app.terraform_data.autoscaler",
+              "mode": "managed",
+              "type": "terraform_data",
+              "name": "autoscaler",
+              "provider_name": "terraform.io/builtin/terraform",
+              "schema_version": 0,
+              "values": {
+                "id": "ea34a68c-6da6-60fd-6fb5-3c6b75ebb265",
+                "input": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+                "output": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+                "store": null,
+                "triggers_replace": null
+              },
+              "sensitive_values": {}
+            },
+            {
+              "address": "module.app.terraform_data.deployment",
+              "mode": "managed",
+              "type": "terraform_data",
+              "name": "deployment",
+              "provider_name": "terraform.io/builtin/terraform",
+              "schema_version": 0,
+              "values": {
+                "id": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+                "input": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+                "output": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+                "store": null,
+                "triggers_replace": null
+              },
+              "sensitive_values": {}
+            },
+            {
+              "address": "module.app.terraform_data.worker[0]",
+              "mode": "managed",
+              "type": "terraform_data",
+              "name": "worker",
+              "index": 0,
+              "provider_name": "terraform.io/builtin/terraform",
+              "schema_version": 0,
+              "values": {
+                "id": "45534547-a37a-b77d-1b19-d26ed0f04cab",
+                "input": {
+                  "release": "v2"
+                },
+                "store": null,
+                "triggers_replace": null
+              },
+              "sensitive_values": {
+                "input": {},
+                "output": {}
+              }
+            }
+          ],
+          "address": "module.app"
+        },
+        {
+          "resources": [
+            {
+              "address": "module.database.terraform_data.primary",
+              "mode": "managed",
+              "type": "terraform_data",
+              "name": "primary",
+              "provider_name": "terraform.io/builtin/terraform",
+              "schema_version": 0,
+              "values": {
+                "input": {
+                  "password": "CANARY-rotated-password",
+                  "subnets": [
+                    "8de4559f-0222-90e4-3d50-3033005a88de",
+                    "fc6f7783-dde4-0b11-e297-ce06f52eb035"
+                  ]
+                },
+                "store": null,
+                "triggers_replace": "gp3"
+              },
+              "sensitive_values": {
+                "input": {
+                  "password": true,
+                  "subnets": [
+                    false,
+                    false
+                  ]
+                },
+                "output": {}
+              }
+            }
+          ],
+          "address": "module.database"
+        },
+        {
+          "resources": [
+            {
+              "address": "module.network.terraform_data.subnet[\"zone-a\"]",
+              "mode": "managed",
+              "type": "terraform_data",
+              "name": "subnet",
+              "index": "zone-a",
+              "provider_name": "terraform.io/builtin/terraform",
+              "schema_version": 0,
+              "values": {
+                "id": "8de4559f-0222-90e4-3d50-3033005a88de",
+                "input": {
+                  "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                  "zone": "zone-a"
+                },
+                "output": {
+                  "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                  "zone": "zone-a"
+                },
+                "store": null,
+                "triggers_replace": null
+              },
+              "sensitive_values": {
+                "input": {},
+                "output": {}
+              }
+            },
+            {
+              "address": "module.network.terraform_data.subnet[\"zone-b\"]",
+              "mode": "managed",
+              "type": "terraform_data",
+              "name": "subnet",
+              "index": "zone-b",
+              "provider_name": "terraform.io/builtin/terraform",
+              "schema_version": 0,
+              "values": {
+                "id": "fc6f7783-dde4-0b11-e297-ce06f52eb035",
+                "input": {
+                  "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                  "zone": "zone-b"
+                },
+                "output": {
+                  "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                  "zone": "zone-b"
+                },
+                "store": null,
+                "triggers_replace": null
+              },
+              "sensitive_values": {
+                "input": {},
+                "output": {}
+              }
+            },
+            {
+              "address": "module.network.terraform_data.vpc",
+              "mode": "managed",
+              "type": "terraform_data",
+              "name": "vpc",
+              "provider_name": "terraform.io/builtin/terraform",
+              "schema_version": 0,
+              "values": {
+                "id": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                "input": "10.0.0.0/16",
+                "output": "10.0.0.0/16",
+                "store": null,
+                "triggers_replace": null
+              },
+              "sensitive_values": {}
+            }
+          ],
+          "address": "module.network"
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "terraform_data.cache[0]",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "cache",
+      "index": 0,
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "id": "f5a90110-381f-32e0-3d58-ca6ecd757c25",
+          "input": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+          "output": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": false
+      },
+      "action_reason": "delete_because_count_index"
+    },
+    {
+      "address": "module.app.terraform_data.api",
+      "module_address": "module.app",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "api",
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "id": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+          "input": {
+            "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+            "release": "v1"
+          },
+          "output": {
+            "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+            "release": "v1"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": {
+          "id": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+          "input": {
+            "release": "v2"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after_unknown": {
+          "input": {
+            "db": true
+          },
+          "output": true
+        },
+        "before_sensitive": {
+          "input": {},
+          "output": {}
+        },
+        "after_sensitive": {
+          "input": {},
+          "output": {}
+        }
+      }
+    },
+    {
+      "address": "module.app.terraform_data.autoscaler",
+      "module_address": "module.app",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "autoscaler",
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "id": "ea34a68c-6da6-60fd-6fb5-3c6b75ebb265",
+          "input": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+          "output": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": {
+          "id": "ea34a68c-6da6-60fd-6fb5-3c6b75ebb265",
+          "input": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+          "output": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+          "store": null,
+          "triggers_replace": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "module.app.terraform_data.deployment",
+      "module_address": "module.app",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "deployment",
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "id": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+          "input": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+          "output": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": {
+          "id": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+          "input": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+          "output": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+          "store": null,
+          "triggers_replace": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "module.app.terraform_data.worker[0]",
+      "module_address": "module.app",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "worker",
+      "index": 0,
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "id": "45534547-a37a-b77d-1b19-d26ed0f04cab",
+          "input": {
+            "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+            "release": "v1"
+          },
+          "output": {
+            "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+            "release": "v1"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": {
+          "id": "45534547-a37a-b77d-1b19-d26ed0f04cab",
+          "input": {
+            "release": "v2"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after_unknown": {
+          "input": {
+            "db": true
+          },
+          "output": true
+        },
+        "before_sensitive": {
+          "input": {},
+          "output": {}
+        },
+        "after_sensitive": {
+          "input": {},
+          "output": {}
+        }
+      }
+    },
+    {
+      "address": "module.app.terraform_data.worker[1]",
+      "module_address": "module.app",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "worker",
+      "index": 1,
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "id": "7d9951ee-a73e-472a-5f44-ccf993bc5bd0",
+          "input": {
+            "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+            "release": "v1"
+          },
+          "output": {
+            "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+            "release": "v1"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {
+          "input": {},
+          "output": {}
+        },
+        "after_sensitive": false
+      },
+      "action_reason": "delete_because_count_index"
+    },
+    {
+      "address": "module.app.terraform_data.worker[2]",
+      "module_address": "module.app",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "worker",
+      "index": 2,
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "id": "5c67cac2-ab88-cdc3-ba75-9a40abacc31b",
+          "input": {
+            "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+            "release": "v1"
+          },
+          "output": {
+            "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+            "release": "v1"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {
+          "input": {},
+          "output": {}
+        },
+        "after_sensitive": false
+      },
+      "action_reason": "delete_because_count_index"
+    },
+    {
+      "address": "module.database.terraform_data.primary",
+      "module_address": "module.database",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "primary",
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "before": {
+          "id": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+          "input": {
+            "password": "CANARY-baseline-password",
+            "subnets": [
+              "8de4559f-0222-90e4-3d50-3033005a88de",
+              "fc6f7783-dde4-0b11-e297-ce06f52eb035",
+              "bd72206c-eb8f-47d4-3575-a5010b8c8746"
+            ]
+          },
+          "output": {
+            "password": "CANARY-baseline-password",
+            "subnets": [
+              "8de4559f-0222-90e4-3d50-3033005a88de",
+              "fc6f7783-dde4-0b11-e297-ce06f52eb035",
+              "bd72206c-eb8f-47d4-3575-a5010b8c8746"
+            ]
+          },
+          "store": null,
+          "triggers_replace": "gp2"
+        },
+        "after": {
+          "input": {
+            "password": "CANARY-rotated-password",
+            "subnets": [
+              "8de4559f-0222-90e4-3d50-3033005a88de",
+              "fc6f7783-dde4-0b11-e297-ce06f52eb035"
+            ]
+          },
+          "store": null,
+          "triggers_replace": "gp3"
+        },
+        "after_unknown": {
+          "id": true,
+          "input": {
+            "subnets": [
+              false,
+              false
+            ]
+          },
+          "output": true
+        },
+        "before_sensitive": {
+          "input": {
+            "password": true,
+            "subnets": [
+              false,
+              false,
+              false
+            ]
+          },
+          "output": {
+            "subnets": [
+              false,
+              false,
+              false
+            ]
+          }
+        },
+        "after_sensitive": {
+          "input": {
+            "password": true,
+            "subnets": [
+              false,
+              false
+            ]
+          },
+          "output": {}
+        },
+        "replace_paths": [
+          [
+            "triggers_replace"
+          ]
+        ]
+      },
+      "action_reason": "replace_because_cannot_update"
+    },
+    {
+      "address": "module.network.terraform_data.subnet[\"zone-a\"]",
+      "module_address": "module.network",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "subnet",
+      "index": "zone-a",
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "id": "8de4559f-0222-90e4-3d50-3033005a88de",
+          "input": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-a"
+          },
+          "output": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-a"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": {
+          "id": "8de4559f-0222-90e4-3d50-3033005a88de",
+          "input": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-a"
+          },
+          "output": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-a"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "input": {},
+          "output": {}
+        },
+        "after_sensitive": {
+          "input": {},
+          "output": {}
+        }
+      }
+    },
+    {
+      "address": "module.network.terraform_data.subnet[\"zone-b\"]",
+      "module_address": "module.network",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "subnet",
+      "index": "zone-b",
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "id": "fc6f7783-dde4-0b11-e297-ce06f52eb035",
+          "input": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-b"
+          },
+          "output": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-b"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": {
+          "id": "fc6f7783-dde4-0b11-e297-ce06f52eb035",
+          "input": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-b"
+          },
+          "output": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-b"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "input": {},
+          "output": {}
+        },
+        "after_sensitive": {
+          "input": {},
+          "output": {}
+        }
+      }
+    },
+    {
+      "address": "module.network.terraform_data.subnet[\"zone-c\"]",
+      "module_address": "module.network",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "subnet",
+      "index": "zone-c",
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "before": {
+          "id": "bd72206c-eb8f-47d4-3575-a5010b8c8746",
+          "input": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-c"
+          },
+          "output": {
+            "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+            "zone": "zone-c"
+          },
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {
+          "input": {},
+          "output": {}
+        },
+        "after_sensitive": false
+      },
+      "action_reason": "delete_because_each_key"
+    },
+    {
+      "address": "module.network.terraform_data.vpc",
+      "module_address": "module.network",
+      "mode": "managed",
+      "type": "terraform_data",
+      "name": "vpc",
+      "provider_name": "terraform.io/builtin/terraform",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "id": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+          "input": "10.0.0.0/16",
+          "output": "10.0.0.0/16",
+          "store": null,
+          "triggers_replace": null
+        },
+        "after": {
+          "id": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+          "input": "10.0.0.0/16",
+          "output": "10.0.0.0/16",
+          "store": null,
+          "triggers_replace": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "prior_state": {
+    "format_version": "1.0",
+    "terraform_version": "1.16.6",
+    "values": {
+      "root_module": {
+        "resources": [
+          {
+            "address": "terraform_data.cache[0]",
+            "mode": "managed",
+            "type": "terraform_data",
+            "name": "cache",
+            "index": 0,
+            "provider_name": "terraform.io/builtin/terraform",
+            "schema_version": 0,
+            "values": {
+              "id": "f5a90110-381f-32e0-3d58-ca6ecd757c25",
+              "input": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+              "output": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+              "store": null,
+              "triggers_replace": null
+            },
+            "sensitive_values": {},
+            "depends_on": [
+              "module.network.terraform_data.vpc"
+            ]
+          }
+        ],
+        "child_modules": [
+          {
+            "resources": [
+              {
+                "address": "module.app.terraform_data.api",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "api",
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+                  "input": {
+                    "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                    "release": "v1"
+                  },
+                  "output": {
+                    "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                    "release": "v1"
+                  },
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {
+                  "input": {},
+                  "output": {}
+                },
+                "depends_on": [
+                  "module.database.terraform_data.primary",
+                  "module.network.terraform_data.subnet",
+                  "module.network.terraform_data.vpc"
+                ]
+              },
+              {
+                "address": "module.app.terraform_data.autoscaler",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "autoscaler",
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "ea34a68c-6da6-60fd-6fb5-3c6b75ebb265",
+                  "input": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+                  "output": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {},
+                "depends_on": [
+                  "module.app.terraform_data.api",
+                  "module.app.terraform_data.deployment",
+                  "module.database.terraform_data.primary",
+                  "module.network.terraform_data.subnet",
+                  "module.network.terraform_data.vpc"
+                ]
+              },
+              {
+                "address": "module.app.terraform_data.deployment",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "deployment",
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "04947cc5-5b0b-319d-7c09-0cd46a523773",
+                  "input": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+                  "output": "08b9d090-f36f-06ff-6e3c-9f6ebbccd709",
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {},
+                "depends_on": [
+                  "module.app.terraform_data.api",
+                  "module.database.terraform_data.primary",
+                  "module.network.terraform_data.subnet",
+                  "module.network.terraform_data.vpc"
+                ]
+              },
+              {
+                "address": "module.app.terraform_data.worker[0]",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "worker",
+                "index": 0,
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "45534547-a37a-b77d-1b19-d26ed0f04cab",
+                  "input": {
+                    "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                    "release": "v1"
+                  },
+                  "output": {
+                    "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                    "release": "v1"
+                  },
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {
+                  "input": {},
+                  "output": {}
+                },
+                "depends_on": [
+                  "module.database.terraform_data.primary",
+                  "module.network.terraform_data.subnet",
+                  "module.network.terraform_data.vpc"
+                ]
+              },
+              {
+                "address": "module.app.terraform_data.worker[1]",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "worker",
+                "index": 1,
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "7d9951ee-a73e-472a-5f44-ccf993bc5bd0",
+                  "input": {
+                    "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                    "release": "v1"
+                  },
+                  "output": {
+                    "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                    "release": "v1"
+                  },
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {
+                  "input": {},
+                  "output": {}
+                },
+                "depends_on": [
+                  "module.database.terraform_data.primary",
+                  "module.network.terraform_data.subnet",
+                  "module.network.terraform_data.vpc"
+                ]
+              },
+              {
+                "address": "module.app.terraform_data.worker[2]",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "worker",
+                "index": 2,
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "5c67cac2-ab88-cdc3-ba75-9a40abacc31b",
+                  "input": {
+                    "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                    "release": "v1"
+                  },
+                  "output": {
+                    "db": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                    "release": "v1"
+                  },
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {
+                  "input": {},
+                  "output": {}
+                },
+                "depends_on": [
+                  "module.database.terraform_data.primary",
+                  "module.network.terraform_data.subnet",
+                  "module.network.terraform_data.vpc"
+                ]
+              }
+            ],
+            "address": "module.app"
+          },
+          {
+            "resources": [
+              {
+                "address": "module.database.terraform_data.primary",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "primary",
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "7e51df48-309e-63eb-f3cf-e3ee30639ec4",
+                  "input": {
+                    "password": "CANARY-baseline-password",
+                    "subnets": [
+                      "8de4559f-0222-90e4-3d50-3033005a88de",
+                      "fc6f7783-dde4-0b11-e297-ce06f52eb035",
+                      "bd72206c-eb8f-47d4-3575-a5010b8c8746"
+                    ]
+                  },
+                  "output": {
+                    "password": "CANARY-baseline-password",
+                    "subnets": [
+                      "8de4559f-0222-90e4-3d50-3033005a88de",
+                      "fc6f7783-dde4-0b11-e297-ce06f52eb035",
+                      "bd72206c-eb8f-47d4-3575-a5010b8c8746"
+                    ]
+                  },
+                  "store": null,
+                  "triggers_replace": "gp2"
+                },
+                "sensitive_values": {
+                  "input": {
+                    "password": true,
+                    "subnets": [
+                      false,
+                      false,
+                      false
+                    ]
+                  },
+                  "output": {
+                    "subnets": [
+                      false,
+                      false,
+                      false
+                    ]
+                  }
+                },
+                "depends_on": [
+                  "module.network.terraform_data.subnet",
+                  "module.network.terraform_data.vpc"
+                ]
+              }
+            ],
+            "address": "module.database"
+          },
+          {
+            "resources": [
+              {
+                "address": "module.network.terraform_data.subnet[\"zone-a\"]",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "subnet",
+                "index": "zone-a",
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "8de4559f-0222-90e4-3d50-3033005a88de",
+                  "input": {
+                    "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                    "zone": "zone-a"
+                  },
+                  "output": {
+                    "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                    "zone": "zone-a"
+                  },
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {
+                  "input": {},
+                  "output": {}
+                },
+                "depends_on": [
+                  "module.network.terraform_data.vpc"
+                ]
+              },
+              {
+                "address": "module.network.terraform_data.subnet[\"zone-b\"]",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "subnet",
+                "index": "zone-b",
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "fc6f7783-dde4-0b11-e297-ce06f52eb035",
+                  "input": {
+                    "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                    "zone": "zone-b"
+                  },
+                  "output": {
+                    "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                    "zone": "zone-b"
+                  },
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {
+                  "input": {},
+                  "output": {}
+                },
+                "depends_on": [
+                  "module.network.terraform_data.vpc"
+                ]
+              },
+              {
+                "address": "module.network.terraform_data.subnet[\"zone-c\"]",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "subnet",
+                "index": "zone-c",
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "bd72206c-eb8f-47d4-3575-a5010b8c8746",
+                  "input": {
+                    "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                    "zone": "zone-c"
+                  },
+                  "output": {
+                    "vpc": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                    "zone": "zone-c"
+                  },
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {
+                  "input": {},
+                  "output": {}
+                },
+                "depends_on": [
+                  "module.network.terraform_data.vpc"
+                ]
+              },
+              {
+                "address": "module.network.terraform_data.vpc",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "vpc",
+                "provider_name": "terraform.io/builtin/terraform",
+                "schema_version": 0,
+                "values": {
+                  "id": "fc9cc5e4-5624-c5df-d8d5-a1348ec3aeb2",
+                  "input": "10.0.0.0/16",
+                  "output": "10.0.0.0/16",
+                  "store": null,
+                  "triggers_replace": null
+                },
+                "sensitive_values": {}
+              }
+            ],
+            "address": "module.network"
+          }
+        ]
+      }
+    }
+  },
+  "configuration": {
+    "provider_config": {
+      "terraform": {
+        "name": "terraform",
+        "full_name": "terraform.io/builtin/terraform"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "terraform_data.cache",
+          "mode": "managed",
+          "type": "terraform_data",
+          "name": "cache",
+          "provider_config_key": "terraform",
+          "expressions": {
+            "input": {
+              "references": [
+                "module.network.vpc_id",
+                "module.network"
+              ]
+            }
+          },
+          "schema_version": 0,
+          "count_expression": {
+            "references": [
+              "var.legacy_cache"
+            ]
+          }
+        }
+      ],
+      "module_calls": {
+        "app": {
+          "source": "./modules/app",
+          "expressions": {
+            "db_endpoint": {
+              "references": [
+                "module.database.endpoint",
+                "module.database"
+              ]
+            },
+            "release": {
+              "references": [
+                "var.release"
+              ]
+            },
+            "workers": {
+              "references": [
+                "var.workers"
+              ]
+            }
+          },
+          "module": {
+            "resources": [
+              {
+                "address": "terraform_data.api",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "api",
+                "provider_config_key": "terraform",
+                "expressions": {
+                  "input": {
+                    "references": [
+                      "var.db_endpoint",
+                      "var.release"
+                    ]
+                  }
+                },
+                "schema_version": 0
+              },
+              {
+                "address": "terraform_data.autoscaler",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "autoscaler",
+                "provider_config_key": "terraform",
+                "expressions": {
+                  "input": {
+                    "references": [
+                      "terraform_data.deployment.id",
+                      "terraform_data.deployment"
+                    ]
+                  }
+                },
+                "schema_version": 0
+              },
+              {
+                "address": "terraform_data.deployment",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "deployment",
+                "provider_config_key": "terraform",
+                "expressions": {
+                  "input": {
+                    "references": [
+                      "terraform_data.api.id",
+                      "terraform_data.api"
+                    ]
+                  }
+                },
+                "schema_version": 0
+              },
+              {
+                "address": "terraform_data.worker",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "worker",
+                "provider_config_key": "terraform",
+                "expressions": {
+                  "input": {
+                    "references": [
+                      "var.db_endpoint",
+                      "var.release"
+                    ]
+                  }
+                },
+                "schema_version": 0,
+                "count_expression": {
+                  "references": [
+                    "var.workers"
+                  ]
+                }
+              }
+            ],
+            "variables": {
+              "db_endpoint": {},
+              "release": {},
+              "workers": {}
+            }
+          }
+        },
+        "database": {
+          "source": "./modules/database",
+          "expressions": {
+            "password": {
+              "references": [
+                "var.db_password"
+              ]
+            },
+            "storage_type": {
+              "references": [
+                "var.storage_type"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "module.network.subnet_ids",
+                "module.network"
+              ]
+            }
+          },
+          "module": {
+            "outputs": {
+              "endpoint": {
+                "expression": {
+                  "references": [
+                    "terraform_data.primary.id",
+                    "terraform_data.primary"
+                  ]
+                }
+              }
+            },
+            "resources": [
+              {
+                "address": "terraform_data.primary",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "primary",
+                "provider_config_key": "terraform",
+                "expressions": {
+                  "input": {
+                    "references": [
+                      "var.subnet_ids",
+                      "var.password"
+                    ]
+                  },
+                  "triggers_replace": {
+                    "references": [
+                      "var.storage_type"
+                    ]
+                  }
+                },
+                "schema_version": 0
+              }
+            ],
+            "variables": {
+              "password": {
+                "sensitive": true
+              },
+              "storage_type": {},
+              "subnet_ids": {}
+            }
+          }
+        },
+        "network": {
+          "source": "./modules/network",
+          "expressions": {
+            "zones": {
+              "references": [
+                "var.zones"
+              ]
+            }
+          },
+          "module": {
+            "outputs": {
+              "subnet_ids": {
+                "expression": {
+                  "references": [
+                    "terraform_data.subnet"
+                  ]
+                }
+              },
+              "vpc_id": {
+                "expression": {
+                  "references": [
+                    "terraform_data.vpc.id",
+                    "terraform_data.vpc"
+                  ]
+                }
+              }
+            },
+            "resources": [
+              {
+                "address": "terraform_data.subnet",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "subnet",
+                "provider_config_key": "terraform",
+                "expressions": {
+                  "input": {
+                    "references": [
+                      "terraform_data.vpc.id",
+                      "terraform_data.vpc",
+                      "each.key"
+                    ]
+                  }
+                },
+                "schema_version": 0,
+                "for_each_expression": {
+                  "references": [
+                    "var.zones"
+                  ]
+                }
+              },
+              {
+                "address": "terraform_data.vpc",
+                "mode": "managed",
+                "type": "terraform_data",
+                "name": "vpc",
+                "provider_config_key": "terraform",
+                "expressions": {
+                  "input": {
+                    "constant_value": "10.0.0.0/16"
+                  }
+                },
+                "schema_version": 0
+              }
+            ],
+            "variables": {
+              "zones": {}
+            }
+          }
+        }
+      },
+      "variables": {
+        "db_password": {
+          "sensitive": true
+        },
+        "legacy_cache": {},
+        "release": {},
+        "storage_type": {},
+        "workers": {},
+        "zones": {}
+      }
+    }
+  },
+  "relevant_attributes": [
+    {
+      "resource": "module.database.terraform_data.primary",
+      "attribute": [
+        "id"
+      ]
+    },
+    {
+      "resource": "module.network.terraform_data.subnet",
+      "attribute": []
+    },
+    {
+      "resource": "module.network.terraform_data.vpc",
+      "attribute": [
+        "id"
+      ]
+    }
+  ],
+  "timestamp": "2026-11-26T21:52:31Z",
+  "applyable": true,
+  "complete": true,
+  "errored": false
+}

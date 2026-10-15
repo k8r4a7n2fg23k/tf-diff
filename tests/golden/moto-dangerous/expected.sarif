@@ -1,0 +1,931 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "tf-diff",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "rules": [
+            {
+              "id": "backup-disabled",
+              "name": "backup-disabled",
+              "shortDescription": {
+                "text": "Backup retention, final snapshot or point-in-time recovery is turned off"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "destroy-production-resource",
+              "name": "destroy-production-resource",
+              "shortDescription": {
+                "text": "Resource deleted in production"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "encryption-disabled",
+              "name": "encryption-disabled",
+              "shortDescription": {
+                "text": "Encryption flag goes from true to false"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "public-database",
+              "name": "public-database",
+              "shortDescription": {
+                "text": "RDS instance becomes publicly accessible"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "reduce-capacity",
+              "name": "reduce-capacity",
+              "shortDescription": {
+                "text": "Capacity attribute drops by the threshold percent or more"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "remove-redundancy",
+              "name": "remove-redundancy",
+              "shortDescription": {
+                "text": "Zone or subnet spread falls to one, or Multi-AZ is turned off"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "replace-resource",
+              "name": "replace-resource",
+              "shortDescription": {
+                "text": "Resource is destroyed and recreated (medium in production, low elsewhere)"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "stateful-data-loss",
+              "name": "stateful-data-loss",
+              "shortDescription": {
+                "text": "Data store is deleted or replaced: critical in production, high elsewhere; one step lower when a final snapshot or deletion guard keeps the data"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "s3-public-access-weakened",
+              "name": "s3-public-access-weakened",
+              "shortDescription": {
+                "text": "S3 public access block is turned off or deleted"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "security-group-wide-open",
+              "name": "security-group-wide-open",
+              "shortDescription": {
+                "text": "Security group ingress newly open to 0.0.0.0/0 or ::/0 (critical on admin/database ports)"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "sensitive-value-changed",
+              "name": "sensitive-value-changed",
+              "shortDescription": {
+                "text": "Sensitive attribute changes (the value is never shown)"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "security-severity": "1.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "wide-blast-radius",
+              "name": "wide-blast-radius",
+              "shortDescription": {
+                "text": "Destroyed or replaced resource has many dependents"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "encryption-disabled",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "module.compute.aws_ebs_volume.scratch: Encryption disabled. encrypted turns off"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_ebs_volume.scratch",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "8b59bde5e981112a722a9570bc106ff880e7b9f2e500b6f0675cfc98848590e9"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "encrypted: true -> false"
+            ]
+          }
+        },
+        {
+          "ruleId": "stateful-data-loss",
+          "ruleIndex": 7,
+          "level": "error",
+          "message": {
+            "text": "module.compute.aws_ebs_volume.scratch: Data store replaced. aws_ebs_volume holds data; encrypted forces a new one, existing data is lost"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_ebs_volume.scratch",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "ba9fb691a16ed8876f31878b5e185b83d85a74b922f0b245dcc591192187d0e9"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "encrypted: true -> false"
+            ]
+          }
+        },
+        {
+          "ruleId": "encryption-disabled",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_db_instance.orders: Encryption disabled. storage_encrypted turns off"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_db_instance.orders",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "5d8a8a9820b105ca52875ba42f766637c8317e50985af91743e9cfa5d184acb5"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 1 direct, 1 indirect",
+              "storage_encrypted: true -> false"
+            ]
+          }
+        },
+        {
+          "ruleId": "public-database",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_db_instance.orders: Database becomes publicly accessible. publicly_accessible turns on: the endpoint resolves to a public IP"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_db_instance.orders",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "35e62c90f222edc16b4eac46103121a21bd1864d4cc20576a1505372550bbe8f"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 1 direct, 1 indirect",
+              "publicly_accessible: false -> true"
+            ]
+          }
+        },
+        {
+          "ruleId": "security-group-wide-open",
+          "ruleIndex": 9,
+          "level": "error",
+          "message": {
+            "text": "module.network.aws_security_group_rule.ssh: Ingress opened to the internet. 1 ingress rule(s) newly open to 0.0.0.0/0"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.aws_security_group_rule.ssh",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "69f29b19a9773bdae414a090fbf18230f422c285c6f7d9f54a0a1af7212a1adb"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "ingress: tcp ports 22-22 from 0.0.0.0/0"
+            ]
+          }
+        },
+        {
+          "ruleId": "reduce-capacity",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "module.compute.aws_autoscaling_group.web: Capacity reduced. desired_capacity drops by 67% (threshold 30%)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_autoscaling_group.web",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "6d4f0ab29c17d5da4d5b3a7e6e753eeaf6bfe5d5fbf54492dea939dbff821e01"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "desired_capacity: 6 -> 2"
+            ]
+          }
+        },
+        {
+          "ruleId": "reduce-capacity",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "module.compute.aws_autoscaling_group.web: Capacity reduced. min_size drops by 67% (threshold 30%)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_autoscaling_group.web",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "91b526882f045afacb22f2bf4148701c71b828f6c5c5ec58ab686f3b49323bd3"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "min_size: 3 -> 1"
+            ]
+          }
+        },
+        {
+          "ruleId": "remove-redundancy",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "module.compute.aws_autoscaling_group.web: Redundancy removed. vpc_zone_identifier drops from 3 entries to 1"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_autoscaling_group.web",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "d4cd07170c0d78ffdd67ab44ff5dd9af6aaf91f4cac1f1734b33abb4dffc5db4"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "vpc_zone_identifier: 3 -> 1"
+            ]
+          }
+        },
+        {
+          "ruleId": "backup-disabled",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_db_instance.orders: Backups disabled. backup_retention_period removes the way back after data loss"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_db_instance.orders",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "c245debe094a8b3a0a80fce845ffa4657524b2b6b6984e2c8a111220acf847ea"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 1 direct, 1 indirect",
+              "backup_retention_period: 7 -> 0"
+            ]
+          }
+        },
+        {
+          "ruleId": "backup-disabled",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_db_instance.orders: Backups disabled. skip_final_snapshot removes the way back after data loss"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_db_instance.orders",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "59f790d6fef9481118e9b47e874241d8f59976abcfcf879c0bc9a2a22696657b"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 1 direct, 1 indirect",
+              "skip_final_snapshot: false -> true"
+            ]
+          }
+        },
+        {
+          "ruleId": "remove-redundancy",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_db_instance.orders: Multi-AZ disabled. multi_az turns off"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_db_instance.orders",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "bbefb40cfe0cfb595deea9484407f379f3730204d532ca09985323fede14e1af"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 1 direct, 1 indirect",
+              "multi_az: true -> false"
+            ]
+          }
+        },
+        {
+          "ruleId": "stateful-data-loss",
+          "ruleIndex": 7,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_db_instance.orders: Data store replaced. aws_db_instance holds data; storage_encrypted forces a new one, but skip_final_snapshot = false: the provider refuses to delete it without final_snapshot_identifier"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_db_instance.orders",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "c76549f538f50ad96cb101ce75c72269d905443bff0f129e6c607337cd3d9ce4"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 1 direct, 1 indirect",
+              "storage_encrypted: true -> false",
+              "skip_final_snapshot: false"
+            ]
+          }
+        },
+        {
+          "ruleId": "backup-disabled",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_dynamodb_table.orders: Backups disabled. point_in_time_recovery[0].enabled removes the way back after data loss"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_dynamodb_table.orders",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "568ca77b4ad84130ec76ca940df02a1daaf6a9ce70c35214d60551d8c2cb0eb3"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "point_in_time_recovery[0].enabled: true -> false"
+            ]
+          }
+        },
+        {
+          "ruleId": "s3-public-access-weakened",
+          "ruleIndex": 8,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_s3_bucket_public_access_block.exports: S3 public access block weakened. 2 public access guard(s) turn off"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_s3_bucket_public_access_block.exports",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "dbea814dcd811dd4ad35c1cd8c9b6d82a0ac8cda7452262c0babf87c7b872e06"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "block_public_policy: true -> false",
+              "restrict_public_buckets: true -> false"
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.compute.aws_ebs_volume.scratch: Resource replaced. encrypted cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_ebs_volume.scratch",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "489f7ffa376d8d613b3a49c55ab8a0337ee0540011a8a11171f01ad822216b38"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "encrypted: true -> false"
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.compute.aws_lb.web: Resource replaced. name cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_lb.web",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "3172ba767190a873160a8c70d7c96a3e5929b4427bc1f80016110641786a9390"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "name: \"web\" -> \"web-v2\""
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.data.aws_db_instance.orders: Resource replaced. storage_encrypted cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_db_instance.orders",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "2ded4bef57bf8bdfc5057ec4976308af9f2f0f84b5824530cdc2ce41b4814690"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 1 direct, 1 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "storage_encrypted: true -> false"
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.network.aws_security_group_rule.ssh: Resource replaced. cidr_blocks cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.aws_security_group_rule.ssh",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "e8e2748cd1f86280631c9dda268e6973e32ee40906799c39850fe24d2f3c55aa"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "cidr_blocks[0]: \"10.0.0.0/8\" -> \"0.0.0.0/0\""
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,577 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "tf-diff",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "rules": [
+            {
+              "id": "backup-disabled",
+              "name": "backup-disabled",
+              "shortDescription": {
+                "text": "Backup retention, final snapshot or point-in-time recovery is turned off"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "destroy-production-resource",
+              "name": "destroy-production-resource",
+              "shortDescription": {
+                "text": "Resource deleted in production"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "encryption-disabled",
+              "name": "encryption-disabled",
+              "shortDescription": {
+                "text": "Encryption flag goes from true to false"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "public-database",
+              "name": "public-database",
+              "shortDescription": {
+                "text": "RDS instance becomes publicly accessible"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "reduce-capacity",
+              "name": "reduce-capacity",
+              "shortDescription": {
+                "text": "Capacity attribute drops by the threshold percent or more"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "remove-redundancy",
+              "name": "remove-redundancy",
+              "shortDescription": {
+                "text": "Zone or subnet spread falls to one, or Multi-AZ is turned off"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "replace-resource",
+              "name": "replace-resource",
+              "shortDescription": {
+                "text": "Resource is destroyed and recreated (medium in production, low elsewhere)"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "stateful-data-loss",
+              "name": "stateful-data-loss",
+              "shortDescription": {
+                "text": "Data store is deleted or replaced: critical in production, high elsewhere; one step lower when a final snapshot or deletion guard keeps the data"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "s3-public-access-weakened",
+              "name": "s3-public-access-weakened",
+              "shortDescription": {
+                "text": "S3 public access block is turned off or deleted"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "security-group-wide-open",
+              "name": "security-group-wide-open",
+              "shortDescription": {
+                "text": "Security group ingress newly open to 0.0.0.0/0 or ::/0 (critical on admin/database ports)"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "sensitive-value-changed",
+              "name": "sensitive-value-changed",
+              "shortDescription": {
+                "text": "Sensitive attribute changes (the value is never shown)"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "security-severity": "1.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "wide-blast-radius",
+              "name": "wide-blast-radius",
+              "shortDescription": {
+                "text": "Destroyed or replaced resource has many dependents"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "remove-redundancy",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "module.compute.aws_autoscaling_group.web: Redundancy may drop. vpc_zone_identifier spans 3 entries now and is unknown until apply"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_autoscaling_group.web",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "d4cd07170c0d78ffdd67ab44ff5dd9af6aaf91f4cac1f1734b33abb4dffc5db4"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "low",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "vpc_zone_identifier: 3 -> (known after apply)"
+            ]
+          }
+        },
+        {
+          "ruleId": "remove-redundancy",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "module.compute.aws_lb.web: Redundancy may drop. subnets spans 3 entries now and is unknown until apply"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.compute.aws_lb.web",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "abe5d337b970789f28b9080791e51161c172f672d96a1032d0e189b24baeb622"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "low",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "subnets: 3 -> (known after apply)"
+            ]
+          }
+        },
+        {
+          "ruleId": "remove-redundancy",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "module.data.aws_db_subnet_group.main: Redundancy may drop. subnet_ids spans 3 entries now and is unknown until apply"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.data.aws_db_subnet_group.main",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "b6e2a9085a3c77d0b7ecaf1ed4f4ec4e63d0aeb0f169a0c6a0d49b49eedbc952"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "low",
+            "evidence": [
+              "action: UPDATE",
+              "environment: production",
+              "dependents: 1 direct, 2 indirect",
+              "subnet_ids: 3 -> (known after apply)"
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.network.aws_subnet.private[\"eu-west-1a\"]: Resource replaced. cidr_block cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.aws_subnet.private[\"eu-west-1a\"]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "cefe188edc36529c951192286b115edc9ca5250b3478639d2c0bd6b7d9de3bc9"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 2 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "cidr_block: \"10.20.0.0/24\" -> \"10.20.0.0/22\""
+            ]
+          }
+        },
+        {
+          "ruleId": "wide-blast-radius",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "module.network.aws_subnet.private[\"eu-west-1a\"]: Wide blast radius. 5 resources depend on it (threshold 5)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.aws_subnet.private[\"eu-west-1a\"]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "e56ecb1fbbe708c1be2e5ebe7f477f23017926c8604b8a6fee6e4c53acc622bb"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 2 indirect",
+              "affected: module.compute.aws_autoscaling_group.web, module.compute.aws_lb.web, module.data.aws_db_subnet_group.main, module.compute.aws_launch_template.web, module.data.aws_db_instance.orders"
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.network.aws_subnet.private[\"eu-west-1b\"]: Resource replaced. cidr_block cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.aws_subnet.private[\"eu-west-1b\"]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "eafc94e63d2d8acb6eeef080ec9f44e4ecbfc0161c0cad3d8c6306deced32424"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 2 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "cidr_block: \"10.20.1.0/24\" -> \"10.20.4.0/22\""
+            ]
+          }
+        },
+        {
+          "ruleId": "wide-blast-radius",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "module.network.aws_subnet.private[\"eu-west-1b\"]: Wide blast radius. 5 resources depend on it (threshold 5)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.aws_subnet.private[\"eu-west-1b\"]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "7610153808aea30c2274ea13e19044658b11adc7c27996eb41c976d8d0328a37"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 2 indirect",
+              "affected: module.compute.aws_autoscaling_group.web, module.compute.aws_lb.web, module.data.aws_db_subnet_group.main, module.compute.aws_launch_template.web, module.data.aws_db_instance.orders"
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.network.aws_subnet.private[\"eu-west-1c\"]: Resource replaced. cidr_block cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.aws_subnet.private[\"eu-west-1c\"]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "b67d81d4be4cb7350b92ce288e84c12b28f39393b0468570ffee0a755f44ccd4"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 2 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "cidr_block: \"10.20.2.0/24\" -> \"10.20.8.0/22\""
+            ]
+          }
+        },
+        {
+          "ruleId": "wide-blast-radius",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "module.network.aws_subnet.private[\"eu-west-1c\"]: Wide blast radius. 5 resources depend on it (threshold 5)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.aws_subnet.private[\"eu-west-1c\"]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "d64fcae999961ed1b5edb192fc44eed2490891df1241ca25c64f091e24435c1f"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 3 direct, 2 indirect",
+              "affected: module.compute.aws_autoscaling_group.web, module.compute.aws_lb.web, module.data.aws_db_subnet_group.main, module.compute.aws_launch_template.web, module.data.aws_db_instance.orders"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

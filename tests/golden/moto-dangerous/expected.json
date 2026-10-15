@@ -1,0 +1,2285 @@
+{
+  "schema_version": "1",
+  "tool": {
+    "name": "tf-diff",
+    "version": "0.1.0",
+    "rules_version": "1"
+  },
+  "plan": {
+    "format_version": "1.2",
+    "terraform_version": "1.16.6"
+  },
+  "environment": "production",
+  "summary": {
+    "resources": 18,
+    "changed": 11,
+    "ignored": 0,
+    "actions": {
+      "update": 7,
+      "replace": 4
+    },
+    "risk": {
+      "critical": 5,
+      "high": 9,
+      "medium": 4,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "warnings": [],
+  "findings": [
+    {
+      "rule": "encryption-disabled",
+      "severity": "critical",
+      "resource": "module.compute.aws_ebs_volume.scratch",
+      "title": "Encryption disabled",
+      "reason": "encrypted turns off",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "encrypted",
+          "text": "true -> false"
+        }
+      ]
+    },
+    {
+      "rule": "stateful-data-loss",
+      "severity": "critical",
+      "resource": "module.compute.aws_ebs_volume.scratch",
+      "title": "Data store replaced",
+      "reason": "aws_ebs_volume holds data; encrypted forces a new one, existing data is lost",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "encrypted",
+          "text": "true -> false"
+        }
+      ]
+    },
+    {
+      "rule": "encryption-disabled",
+      "severity": "critical",
+      "resource": "module.data.aws_db_instance.orders",
+      "title": "Encryption disabled",
+      "reason": "storage_encrypted turns off",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 1 indirect"
+        },
+        {
+          "label": "storage_encrypted",
+          "text": "true -> false"
+        }
+      ]
+    },
+    {
+      "rule": "public-database",
+      "severity": "critical",
+      "resource": "module.data.aws_db_instance.orders",
+      "title": "Database becomes publicly accessible",
+      "reason": "publicly_accessible turns on: the endpoint resolves to a public IP",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 1 indirect"
+        },
+        {
+          "label": "publicly_accessible",
+          "text": "false -> true"
+        }
+      ]
+    },
+    {
+      "rule": "security-group-wide-open",
+      "severity": "critical",
+      "resource": "module.network.aws_security_group_rule.ssh",
+      "title": "Ingress opened to the internet",
+      "reason": "1 ingress rule(s) newly open to 0.0.0.0/0",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "ingress",
+          "text": "tcp ports 22-22 from 0.0.0.0/0"
+        }
+      ]
+    },
+    {
+      "rule": "reduce-capacity",
+      "severity": "high",
+      "resource": "module.compute.aws_autoscaling_group.web",
+      "title": "Capacity reduced",
+      "reason": "desired_capacity drops by 67% (threshold 30%)",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "desired_capacity",
+          "text": "6 -> 2"
+        }
+      ]
+    },
+    {
+      "rule": "reduce-capacity",
+      "severity": "high",
+      "resource": "module.compute.aws_autoscaling_group.web",
+      "title": "Capacity reduced",
+      "reason": "min_size drops by 67% (threshold 30%)",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "min_size",
+          "text": "3 -> 1"
+        }
+      ]
+    },
+    {
+      "rule": "remove-redundancy",
+      "severity": "high",
+      "resource": "module.compute.aws_autoscaling_group.web",
+      "title": "Redundancy removed",
+      "reason": "vpc_zone_identifier drops from 3 entries to 1",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "vpc_zone_identifier",
+          "text": "3 -> 1"
+        }
+      ]
+    },
+    {
+      "rule": "backup-disabled",
+      "severity": "high",
+      "resource": "module.data.aws_db_instance.orders",
+      "title": "Backups disabled",
+      "reason": "backup_retention_period removes the way back after data loss",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 1 indirect"
+        },
+        {
+          "label": "backup_retention_period",
+          "text": "7 -> 0"
+        }
+      ]
+    },
+    {
+      "rule": "backup-disabled",
+      "severity": "high",
+      "resource": "module.data.aws_db_instance.orders",
+      "title": "Backups disabled",
+      "reason": "skip_final_snapshot removes the way back after data loss",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 1 indirect"
+        },
+        {
+          "label": "skip_final_snapshot",
+          "text": "false -> true"
+        }
+      ]
+    },
+    {
+      "rule": "remove-redundancy",
+      "severity": "high",
+      "resource": "module.data.aws_db_instance.orders",
+      "title": "Multi-AZ disabled",
+      "reason": "multi_az turns off",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 1 indirect"
+        },
+        {
+          "label": "multi_az",
+          "text": "true -> false"
+        }
+      ]
+    },
+    {
+      "rule": "stateful-data-loss",
+      "severity": "high",
+      "resource": "module.data.aws_db_instance.orders",
+      "title": "Data store replaced",
+      "reason": "aws_db_instance holds data; storage_encrypted forces a new one, but skip_final_snapshot = false: the provider refuses to delete it without final_snapshot_identifier",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 1 indirect"
+        },
+        {
+          "label": "storage_encrypted",
+          "text": "true -> false"
+        },
+        {
+          "label": "skip_final_snapshot",
+          "text": "false"
+        }
+      ]
+    },
+    {
+      "rule": "backup-disabled",
+      "severity": "high",
+      "resource": "module.data.aws_dynamodb_table.orders",
+      "title": "Backups disabled",
+      "reason": "point_in_time_recovery[0].enabled removes the way back after data loss",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "point_in_time_recovery[0].enabled",
+          "text": "true -> false"
+        }
+      ]
+    },
+    {
+      "rule": "s3-public-access-weakened",
+      "severity": "high",
+      "resource": "module.data.aws_s3_bucket_public_access_block.exports",
+      "title": "S3 public access block weakened",
+      "reason": "2 public access guard(s) turn off",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "block_public_policy",
+          "text": "true -> false"
+        },
+        {
+          "label": "restrict_public_buckets",
+          "text": "true -> false"
+        }
+      ]
+    },
+    {
+      "rule": "replace-resource",
+      "severity": "medium",
+      "resource": "module.compute.aws_ebs_volume.scratch",
+      "title": "Resource replaced",
+      "reason": "encrypted cannot be updated in place",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "order",
+          "text": "destroy before create: unavailable until the new one is up"
+        },
+        {
+          "label": "encrypted",
+          "text": "true -> false"
+        }
+      ]
+    },
+    {
+      "rule": "replace-resource",
+      "severity": "medium",
+      "resource": "module.compute.aws_lb.web",
+      "title": "Resource replaced",
+      "reason": "name cannot be updated in place",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "order",
+          "text": "destroy before create: unavailable until the new one is up"
+        },
+        {
+          "label": "name",
+          "text": "\"web\" -> \"web-v2\""
+        }
+      ]
+    },
+    {
+      "rule": "replace-resource",
+      "severity": "medium",
+      "resource": "module.data.aws_db_instance.orders",
+      "title": "Resource replaced",
+      "reason": "storage_encrypted cannot be updated in place",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 1 indirect"
+        },
+        {
+          "label": "order",
+          "text": "destroy before create: unavailable until the new one is up"
+        },
+        {
+          "label": "storage_encrypted",
+          "text": "true -> false"
+        }
+      ]
+    },
+    {
+      "rule": "replace-resource",
+      "severity": "medium",
+      "resource": "module.network.aws_security_group_rule.ssh",
+      "title": "Resource replaced",
+      "reason": "cidr_blocks cannot be updated in place",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "order",
+          "text": "destroy before create: unavailable until the new one is up"
+        },
+        {
+          "label": "cidr_blocks[0]",
+          "text": "\"10.0.0.0/8\" -> \"0.0.0.0/0\""
+        }
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "address": "module.compute.aws_autoscaling_group.web",
+      "type": "aws_autoscaling_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "5 attribute(s) change: desired_capacity, min_size, vpc_zone_identifier[0], vpc_zone_identifier[1], vpc_zone_identifier[2]"
+      ],
+      "attributes": [
+        {
+          "path": "desired_capacity",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": 6
+          },
+          "after": {
+            "state": "known",
+            "value": 2
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "min_size",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": 3
+          },
+          "after": {
+            "state": "known",
+            "value": 1
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "vpc_zone_identifier[0]",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "subnet-1ea6cc96ce97accce"
+          },
+          "after": {
+            "state": "known",
+            "value": "subnet-853638e3f2c91c5d3"
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "vpc_zone_identifier[1]",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "subnet-3bd97c3c49a2b4de2"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "vpc_zone_identifier[2]",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "subnet-853638e3f2c91c5d3"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.compute.aws_launch_template.web",
+        "module.network.aws_subnet.private[\"eu-west-1a\"]",
+        "module.network.aws_subnet.private[\"eu-west-1b\"]",
+        "module.network.aws_subnet.private[\"eu-west-1c\"]"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 50,
+        "confidence": "high",
+        "factors": [
+          "+40 high finding (reduce-capacity)",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "reduce-capacity",
+        "reduce-capacity",
+        "remove-redundancy"
+      ]
+    },
+    {
+      "address": "module.compute.aws_ebs_volume.scratch",
+      "type": "aws_ebs_volume",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "the provider cannot update it in place",
+        "encrypted forces replacement",
+        "8 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "arn",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:ec2:eu-west-1::volume/vol-b189254d80eb0258d"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "create_time",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "2026-11-26T21:56:40Z"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "encrypted",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": true
+          },
+          "after": {
+            "state": "known",
+            "value": false
+          },
+          "forces_replacement": true
+        },
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "vol-b189254d80eb0258d"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "iops",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 0
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "kms_key_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:kms:eu-west-1:123456789012:key/0c3783d6-57cf-4e14-b9e2-dd0a0a990851"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "snapshot_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "throughput",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 0
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "type",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "gp2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 85,
+        "confidence": "high",
+        "factors": [
+          "+60 critical finding (encryption-disabled)",
+          "+15 replace: the old object is destroyed",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "encryption-disabled",
+        "stateful-data-loss",
+        "replace-resource"
+      ]
+    },
+    {
+      "address": "module.compute.aws_launch_template.web",
+      "type": "aws_launch_template",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "2 attribute(s) change: tag_specifications[0].resource_type, tag_specifications[0].tags.Environment",
+        "2 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "latest_version",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 1
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "tag_specifications[0].resource_type",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "launch-template"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "tag_specifications[0].tags.Environment",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "production"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "user_data",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "REJfSE9TVD1vcmRlcnMuYWFhYWFhYWFhYS5ldS13ZXN0LTEucmRzLmFtYXpvbmF3cy5jb20="
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.data.aws_db_instance.orders"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_autoscaling_group.web"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.compute.aws_lb.web",
+      "type": "aws_lb",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "the provider cannot update it in place",
+        "name forces replacement",
+        "12 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "arn",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:elasticloadbalancing:eu-west-1:123456789012:loadbalancer/app/web/bc263a02fb725b48"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "arn_suffix",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "app/web/bc263a02fb725b48"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "dns_name",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "web-1.eu-west-1.elb.amazonaws.com"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "enable_prefix_for_ipv6_source_nat",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "enforce_security_group_inbound_rules_on_private_link_traffic",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:elasticloadbalancing:eu-west-1:123456789012:loadbalancer/app/web/bc263a02fb725b48"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ip_address_type",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "ipv4"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "name",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "web"
+          },
+          "after": {
+            "state": "known",
+            "value": "web-v2"
+          },
+          "forces_replacement": true
+        },
+        {
+          "path": "name_prefix",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "secondary_ips_auto_assigned_per_subnet",
+          "kind": "unknown",
+          "before": {
+            "state": "null",
+            "value": null
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].allocation_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].ipv6_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].outpost_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].private_ipv4_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].subnet_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-1ea6cc96ce97accce"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].allocation_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].ipv6_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].outpost_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].private_ipv4_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].subnet_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-3bd97c3c49a2b4de2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].allocation_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].ipv6_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].outpost_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].private_ipv4_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].subnet_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-853638e3f2c91c5d3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "vpc_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "vpc-a00aba9fdf8b9d736"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "zone_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "Z2P70J7EXAMPLE"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_security_group.web",
+        "module.network.aws_subnet.private[\"eu-west-1a\"]",
+        "module.network.aws_subnet.private[\"eu-west-1b\"]",
+        "module.network.aws_subnet.private[\"eu-west-1c\"]"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 50,
+        "confidence": "high",
+        "factors": [
+          "+25 medium finding (replace-resource)",
+          "+15 replace: the old object is destroyed",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "replace-resource"
+      ]
+    },
+    {
+      "address": "module.data.aws_db_instance.orders",
+      "type": "aws_db_instance",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "the provider cannot update it in place",
+        "storage_encrypted forces replacement",
+        "5 attribute(s) change: backup_retention_period, instance_class, multi_az, publicly_accessible, skip_final_snapshot",
+        "41 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "orders.aaaaaaaaaa.eu-west-1.rds.amazonaws.com"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "arn",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:rds:eu-west-1:123456789012:db:orders"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "availability_zone",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "eu-west-1a"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "backup_retention_period",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": 7
+          },
+          "after": {
+            "state": "known",
+            "value": 0
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "backup_target",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "backup_window",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "13:14-13:44"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ca_cert_identifier",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "rds-ca-default"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "character_set_name",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "database_insights_mode",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "db_name",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "domain_fqdn",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "endpoint",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "orders.aaaaaaaaaa.eu-west-1.rds.amazonaws.com:5432"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "engine_lifecycle_support",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "engine_version_actual",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "16.3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "hosted_zone_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "db-M5ENSHXFPU6XHZ4G4ZEI5QIO2U"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "identifier_prefix",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "instance_class",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "db.t3.medium"
+          },
+          "after": {
+            "state": "known",
+            "value": "db.t3.small"
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "iops",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 0
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "kms_key_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "default_kms_key_id"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "latest_restorable_time",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "2026-11-26T21:58:37Z"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "license_model",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "general-public-license"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "listener_endpoint",
+          "kind": "unknown",
+          "before": {
+            "state": "null",
+            "value": null
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "maintenance_window",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "wed:06:38-wed:07:08"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "master_user_secret",
+          "kind": "unknown",
+          "before": {
+            "state": "sensitive",
+            "value": null
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "master_user_secret_kms_key_id",
+          "kind": "unknown",
+          "before": {
+            "state": "sensitive",
+            "value": null
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "monitoring_role_arn",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "multi_az",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": true
+          },
+          "after": {
+            "state": "known",
+            "value": false
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "nchar_character_set_name",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "network_type",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "option_group_name",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "default:postgres-16-3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "parameter_group_name",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "default.postgres16"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "performance_insights_kms_key_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "performance_insights_retention_period",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 0
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "port",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 5432
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "publicly_accessible",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": false
+          },
+          "after": {
+            "state": "known",
+            "value": true
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "replica_mode",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "replicas",
+          "kind": "unknown",
+          "before": {
+            "state": "null",
+            "value": null
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "resource_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "db-M5ENSHXFPU6XHZ4G4ZEI5QIO2U"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "skip_final_snapshot",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": false
+          },
+          "after": {
+            "state": "known",
+            "value": true
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "snapshot_identifier",
+          "kind": "unknown",
+          "before": {
+            "state": "null",
+            "value": null
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "status",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "available"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "storage_encrypted",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": true
+          },
+          "after": {
+            "state": "known",
+            "value": false
+          },
+          "forces_replacement": true
+        },
+        {
+          "path": "storage_throughput",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 0
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "storage_type",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "gp2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "timezone",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "upgrade_rollout_order",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.data.aws_db_subnet_group.main",
+        "module.network.aws_security_group.db"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_launch_template.web"
+        ],
+        "indirect": [
+          "module.compute.aws_autoscaling_group.web"
+        ]
+      },
+      "score": {
+        "value": 91,
+        "confidence": "high",
+        "factors": [
+          "+60 critical finding (encryption-disabled)",
+          "+15 replace: the old object is destroyed",
+          "+10 production",
+          "+6 2 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "encryption-disabled",
+        "public-database",
+        "backup-disabled",
+        "backup-disabled",
+        "remove-redundancy",
+        "stateful-data-loss",
+        "replace-resource"
+      ]
+    },
+    {
+      "address": "module.data.aws_dynamodb_table.orders",
+      "type": "aws_dynamodb_table",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: point_in_time_recovery[0].enabled"
+      ],
+      "attributes": [
+        {
+          "path": "point_in_time_recovery[0].enabled",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": true
+          },
+          "after": {
+            "state": "known",
+            "value": false
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 50,
+        "confidence": "high",
+        "factors": [
+          "+40 high finding (backup-disabled)",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "backup-disabled"
+      ]
+    },
+    {
+      "address": "module.data.aws_s3_bucket.exports",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: tags_all.Environment"
+      ],
+      "attributes": [
+        {
+          "path": "tags_all.Environment",
+          "kind": "added",
+          "before": {
+            "state": "null",
+            "value": null
+          },
+          "after": {
+            "state": "known",
+            "value": "production"
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [
+          "module.data.aws_s3_bucket_public_access_block.exports"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.data.aws_s3_bucket_public_access_block.exports",
+      "type": "aws_s3_bucket_public_access_block",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "2 attribute(s) change: block_public_policy, restrict_public_buckets"
+      ],
+      "attributes": [
+        {
+          "path": "block_public_policy",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": true
+          },
+          "after": {
+            "state": "known",
+            "value": false
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "restrict_public_buckets",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": true
+          },
+          "after": {
+            "state": "known",
+            "value": false
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.data.aws_s3_bucket.exports"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 50,
+        "confidence": "high",
+        "factors": [
+          "+40 high finding (s3-public-access-weakened)",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "s3-public-access-weakened"
+      ]
+    },
+    {
+      "address": "module.network.aws_security_group.web",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "4 attribute(s) change: ingress[1].cidr_blocks[0], ingress[1].from_port, ingress[1].protocol, ingress[1].to_port"
+      ],
+      "attributes": [
+        {
+          "path": "ingress[1].cidr_blocks[0]",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "10.0.0.0/8"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].from_port",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": 22
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].protocol",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "tcp"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].to_port",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": 22
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_vpc.main"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_lb.web",
+          "module.network.aws_security_group_rule.ssh",
+          "module.network.aws_vpc_security_group_ingress_rule.db_from_web"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.network.aws_security_group_rule.ssh",
+      "type": "aws_security_group_rule",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "the provider cannot update it in place",
+        "cidr_blocks forces replacement",
+        "3 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "cidr_blocks[0]",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "10.0.0.0/8"
+          },
+          "after": {
+            "state": "known",
+            "value": "0.0.0.0/0"
+          },
+          "forces_replacement": true
+        },
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "sgrule-10816156"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "security_group_rule_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "sgr-2649a01cf7fdba52b"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "source_security_group_id",
+          "kind": "unknown",
+          "before": {
+            "state": "null",
+            "value": null
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_security_group.web"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 85,
+        "confidence": "high",
+        "factors": [
+          "+60 critical finding (security-group-wide-open)",
+          "+15 replace: the old object is destroyed",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "security-group-wide-open",
+        "replace-resource"
+      ]
+    },
+    {
+      "address": "module.network.aws_vpc_security_group_ingress_rule.db_from_web",
+      "type": "aws_vpc_security_group_ingress_rule",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: referenced_security_group_id"
+      ],
+      "attributes": [
+        {
+          "path": "referenced_security_group_id",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "123456789012/sg-e5a6bb1ebd2d056e8"
+          },
+          "after": {
+            "state": "known",
+            "value": "sg-e5a6bb1ebd2d056e8"
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_security_group.db",
+        "module.network.aws_security_group.web"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    }
+  ],
+  "ignored": []
+}

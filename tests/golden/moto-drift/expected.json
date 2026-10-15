@@ -1,0 +1,262 @@
+{
+  "schema_version": "1",
+  "tool": {
+    "name": "tf-diff",
+    "version": "0.1.0",
+    "rules_version": "1"
+  },
+  "plan": {
+    "format_version": "1.2",
+    "terraform_version": "1.16.6"
+  },
+  "environment": "production",
+  "summary": {
+    "resources": 18,
+    "changed": 4,
+    "ignored": 0,
+    "actions": {
+      "update": 4
+    },
+    "risk": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "warnings": [],
+  "findings": [],
+  "changes": [
+    {
+      "address": "module.compute.aws_launch_template.web",
+      "type": "aws_launch_template",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "2 attribute(s) change: tag_specifications[0].resource_type, tag_specifications[0].tags.Environment",
+        "1 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "latest_version",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 1
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "tag_specifications[0].resource_type",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "launch-template"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "tag_specifications[0].tags.Environment",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "production"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.data.aws_db_instance.orders"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_autoscaling_group.web"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.data.aws_s3_bucket.exports",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: tags_all.Environment"
+      ],
+      "attributes": [
+        {
+          "path": "tags_all.Environment",
+          "kind": "added",
+          "before": {
+            "state": "null",
+            "value": null
+          },
+          "after": {
+            "state": "known",
+            "value": "production"
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [
+          "module.data.aws_s3_bucket_public_access_block.exports"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.network.aws_security_group.web",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "4 attribute(s) change: ingress[1].cidr_blocks[0], ingress[1].from_port, ingress[1].protocol, ingress[1].to_port"
+      ],
+      "attributes": [
+        {
+          "path": "ingress[1].cidr_blocks[0]",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "10.0.0.0/8"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].from_port",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": 22
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].protocol",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "tcp"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].to_port",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": 22
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_vpc.main"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_lb.web",
+          "module.network.aws_security_group_rule.ssh",
+          "module.network.aws_vpc_security_group_ingress_rule.db_from_web"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.network.aws_vpc_security_group_ingress_rule.db_from_web",
+      "type": "aws_vpc_security_group_ingress_rule",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: referenced_security_group_id"
+      ],
+      "attributes": [
+        {
+          "path": "referenced_security_group_id",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "123456789012/sg-e5a6bb1ebd2d056e8"
+          },
+          "after": {
+            "state": "known",
+            "value": "sg-e5a6bb1ebd2d056e8"
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_security_group.db",
+        "module.network.aws_security_group.web"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    }
+  ],
+  "ignored": []
+}

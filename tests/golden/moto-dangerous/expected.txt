@@ -1,0 +1,216 @@
+Terraform Semantic Diff
+────────────────────────────────────────────────────────────────────────
+Environment   production
+Terraform     1.16.6 (plan format 1.2)
+Resources     18 inspected, 11 changed, 0 ignored
+Changes       7 update, 4 replace
+Risk          5 critical, 9 high, 4 medium, 0 low, 0 info
+────────────────────────────────────────────────────────────────────────
+
+CRITICAL module.compute.aws_ebs_volume.scratch
+  action        REPLACE (delete, create)
+  why           the provider cannot update it in place
+  why           encrypted forces replacement
+  why           8 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         85/100, confidence high
+                +60 critical finding (encryption-disabled)
+                +15 replace: the old object is destroyed
+                +10 production
+  CRITICAL encryption-disabled  Encryption disabled
+             encrypted turns off
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             encrypted: true -> false
+  CRITICAL stateful-data-loss  Data store replaced
+             aws_ebs_volume holds data; encrypted forces a new one, existing data is lost
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             encrypted: true -> false
+  MEDIUM   replace-resource  Resource replaced
+             encrypted cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+             encrypted: true -> false
+
+CRITICAL module.data.aws_db_instance.orders
+  action        REPLACE (delete, create)
+  why           the provider cannot update it in place
+  why           storage_encrypted forces replacement
+  why           5 attribute(s) change: backup_retention_period, instance_class, multi_az, publicly_accessible, skip_final_snapshot
+  why           41 attribute(s) known only after apply
+  blast radius  1 direct, 1 indirect
+  score         91/100, confidence high
+                +60 critical finding (encryption-disabled)
+                +15 replace: the old object is destroyed
+                +10 production
+                +6 2 dependent resource(s)
+  CRITICAL encryption-disabled  Encryption disabled
+             storage_encrypted turns off
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 1 direct, 1 indirect
+             storage_encrypted: true -> false
+  CRITICAL public-database  Database becomes publicly accessible
+             publicly_accessible turns on: the endpoint resolves to a public IP
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 1 direct, 1 indirect
+             publicly_accessible: false -> true
+  HIGH     backup-disabled  Backups disabled
+             backup_retention_period removes the way back after data loss
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 1 direct, 1 indirect
+             backup_retention_period: 7 -> 0
+  HIGH     backup-disabled  Backups disabled
+             skip_final_snapshot removes the way back after data loss
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 1 direct, 1 indirect
+             skip_final_snapshot: false -> true
+  HIGH     remove-redundancy  Multi-AZ disabled
+             multi_az turns off
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 1 direct, 1 indirect
+             multi_az: true -> false
+  HIGH     stateful-data-loss  Data store replaced
+             aws_db_instance holds data; storage_encrypted forces a new one, but skip_final_snapshot = false: the provider refuses to delete it without final_snapshot_identifier
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 1 direct, 1 indirect
+             storage_encrypted: true -> false
+             skip_final_snapshot: false
+  MEDIUM   replace-resource  Resource replaced
+             storage_encrypted cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 1 direct, 1 indirect
+             order: destroy before create: unavailable until the new one is up
+             storage_encrypted: true -> false
+
+CRITICAL module.network.aws_security_group_rule.ssh
+  action        REPLACE (delete, create)
+  why           the provider cannot update it in place
+  why           cidr_blocks forces replacement
+  why           3 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         85/100, confidence high
+                +60 critical finding (security-group-wide-open)
+                +15 replace: the old object is destroyed
+                +10 production
+  CRITICAL security-group-wide-open  Ingress opened to the internet
+             1 ingress rule(s) newly open to 0.0.0.0/0
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             ingress: tcp ports 22-22 from 0.0.0.0/0
+  MEDIUM   replace-resource  Resource replaced
+             cidr_blocks cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+             cidr_blocks[0]: "10.0.0.0/8" -> "0.0.0.0/0"
+
+HIGH     module.compute.aws_autoscaling_group.web
+  action        UPDATE
+  why           5 attribute(s) change: desired_capacity, min_size, vpc_zone_identifier[0], vpc_zone_identifier[1], vpc_zone_identifier[2]
+  blast radius  0 direct, 0 indirect
+  score         50/100, confidence high
+                +40 high finding (reduce-capacity)
+                +10 production
+  HIGH     reduce-capacity  Capacity reduced
+             desired_capacity drops by 67% (threshold 30%)
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             desired_capacity: 6 -> 2
+  HIGH     reduce-capacity  Capacity reduced
+             min_size drops by 67% (threshold 30%)
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             min_size: 3 -> 1
+  HIGH     remove-redundancy  Redundancy removed
+             vpc_zone_identifier drops from 3 entries to 1
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             vpc_zone_identifier: 3 -> 1
+
+HIGH     module.data.aws_dynamodb_table.orders
+  action        UPDATE
+  why           1 attribute(s) change: point_in_time_recovery[0].enabled
+  blast radius  0 direct, 0 indirect
+  score         50/100, confidence high
+                +40 high finding (backup-disabled)
+                +10 production
+  HIGH     backup-disabled  Backups disabled
+             point_in_time_recovery[0].enabled removes the way back after data loss
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             point_in_time_recovery[0].enabled: true -> false
+
+HIGH     module.data.aws_s3_bucket_public_access_block.exports
+  action        UPDATE
+  why           2 attribute(s) change: block_public_policy, restrict_public_buckets
+  blast radius  0 direct, 0 indirect
+  score         50/100, confidence high
+                +40 high finding (s3-public-access-weakened)
+                +10 production
+  HIGH     s3-public-access-weakened  S3 public access block weakened
+             2 public access guard(s) turn off
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             block_public_policy: true -> false
+             restrict_public_buckets: true -> false
+
+MEDIUM   module.compute.aws_lb.web
+  action        REPLACE (delete, create)
+  why           the provider cannot update it in place
+  why           name forces replacement
+  why           12 attribute(s) known only after apply
+  blast radius  0 direct, 0 indirect
+  score         50/100, confidence high
+                +25 medium finding (replace-resource)
+                +15 replace: the old object is destroyed
+                +10 production
+  MEDIUM   replace-resource  Resource replaced
+             name cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 0 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+             name: "web" -> "web-v2"
+
+Other changes
+  update   module.compute.aws_launch_template.web
+  update   module.data.aws_s3_bucket.exports
+  update   module.network.aws_security_group.web
+  update   module.network.aws_vpc_security_group_ingress_rule.db_from_web

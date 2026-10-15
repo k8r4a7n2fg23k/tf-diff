@@ -1,0 +1,536 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "tf-diff",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "rules": [
+            {
+              "id": "backup-disabled",
+              "name": "backup-disabled",
+              "shortDescription": {
+                "text": "Backup retention, final snapshot or point-in-time recovery is turned off"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "destroy-production-resource",
+              "name": "destroy-production-resource",
+              "shortDescription": {
+                "text": "Resource deleted in production"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "encryption-disabled",
+              "name": "encryption-disabled",
+              "shortDescription": {
+                "text": "Encryption flag goes from true to false"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "public-database",
+              "name": "public-database",
+              "shortDescription": {
+                "text": "RDS instance becomes publicly accessible"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "reduce-capacity",
+              "name": "reduce-capacity",
+              "shortDescription": {
+                "text": "Capacity attribute drops by the threshold percent or more"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "remove-redundancy",
+              "name": "remove-redundancy",
+              "shortDescription": {
+                "text": "Zone or subnet spread falls to one, or Multi-AZ is turned off"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "replace-resource",
+              "name": "replace-resource",
+              "shortDescription": {
+                "text": "Resource is destroyed and recreated (medium in production, low elsewhere)"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "stateful-data-loss",
+              "name": "stateful-data-loss",
+              "shortDescription": {
+                "text": "Data store is deleted or replaced: critical in production, high elsewhere; one step lower when a final snapshot or deletion guard keeps the data"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "s3-public-access-weakened",
+              "name": "s3-public-access-weakened",
+              "shortDescription": {
+                "text": "S3 public access block is turned off or deleted"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "8.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "security-group-wide-open",
+              "name": "security-group-wide-open",
+              "shortDescription": {
+                "text": "Security group ingress newly open to 0.0.0.0/0 or ::/0 (critical on admin/database ports)"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "security-severity": "9.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "sensitive-value-changed",
+              "name": "sensitive-value-changed",
+              "shortDescription": {
+                "text": "Sensitive attribute changes (the value is never shown)"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "security-severity": "1.0",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            },
+            {
+              "id": "wide-blast-radius",
+              "name": "wide-blast-radius",
+              "shortDescription": {
+                "text": "Destroyed or replaced resource has many dependents"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "security-severity": "5.5",
+                "tags": [
+                  "terraform",
+                  "infrastructure"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "destroy-production-resource",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "module.app.terraform_data.worker[1]: Production resource destroyed. terraform_data is deleted in a production environment"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.app.terraform_data.worker[1]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "84670ab835b129878c8775c99802b945f6f68f119c41de0059d9d9f8bc7d539f"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: DELETE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "terraform reason: delete_because_count_index"
+            ]
+          }
+        },
+        {
+          "ruleId": "destroy-production-resource",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "module.app.terraform_data.worker[2]: Production resource destroyed. terraform_data is deleted in a production environment"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.app.terraform_data.worker[2]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "6d02938634b482ec9f24bd4d9e1213a3a8842a9cf959e27147002e4dc54f57f2"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: DELETE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "terraform reason: delete_because_count_index"
+            ]
+          }
+        },
+        {
+          "ruleId": "destroy-production-resource",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "module.network.terraform_data.subnet[\"zone-c\"]: Production resource destroyed. terraform_data is deleted in a production environment"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.terraform_data.subnet[\"zone-c\"]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "6143b30c1a2567701095aaf2131d5f2f1d3628b4f4c2140df22c2a532f1c05f8"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: DELETE",
+              "environment: production",
+              "dependents: 1 direct, 6 indirect",
+              "terraform reason: delete_because_each_key"
+            ]
+          }
+        },
+        {
+          "ruleId": "destroy-production-resource",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "terraform_data.cache[0]: Production resource destroyed. terraform_data is deleted in a production environment"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "terraform_data.cache[0]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "7299f5ac85f62c75cffb8bdc62ca6894b8652009bba577b6f6a156953d261d48"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "evidence": [
+              "action: DELETE",
+              "environment: production",
+              "dependents: 0 direct, 0 indirect",
+              "terraform reason: delete_because_count_index"
+            ]
+          }
+        },
+        {
+          "ruleId": "replace-resource",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "module.database.terraform_data.primary: Resource replaced. triggers_replace cannot be updated in place"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.database.terraform_data.primary",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "cd0cf91bb1bddd515756ad950d178c3d1f6de3458f788350778e0b46a3343b9a"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 4 direct, 2 indirect",
+              "order: destroy before create: unavailable until the new one is up",
+              "triggers_replace: \"gp2\" -> \"gp3\""
+            ]
+          }
+        },
+        {
+          "ruleId": "wide-blast-radius",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "module.database.terraform_data.primary: Wide blast radius. 6 resources depend on it (threshold 5)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.database.terraform_data.primary",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "1c56710c689031fa34df54de5ae916674e5795a334c2e5a12836d24609d6a24c"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 4 direct, 2 indirect",
+              "affected: module.app.terraform_data.api, module.app.terraform_data.worker[0], module.app.terraform_data.worker[1], module.app.terraform_data.worker[2], module.app.terraform_data.autoscaler, module.app.terraform_data.deployment"
+            ]
+          }
+        },
+        {
+          "ruleId": "wide-blast-radius",
+          "ruleIndex": 11,
+          "level": "warning",
+          "message": {
+            "text": "module.network.terraform_data.subnet[\"zone-c\"]: Wide blast radius. 7 resources depend on it (threshold 5)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.network.terraform_data.subnet[\"zone-c\"]",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "a33dddbb7efd1309512d537a046fcc7094c7816498244b2914b902b9e736d852"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "evidence": [
+              "action: DELETE",
+              "environment: production",
+              "dependents: 1 direct, 6 indirect",
+              "affected: module.database.terraform_data.primary, module.app.terraform_data.api, module.app.terraform_data.autoscaler, module.app.terraform_data.deployment, module.app.terraform_data.worker[0], module.app.terraform_data.worker[1], module.app.terraform_data.worker[2]"
+            ]
+          }
+        },
+        {
+          "ruleId": "sensitive-value-changed",
+          "ruleIndex": 10,
+          "level": "note",
+          "message": {
+            "text": "module.database.terraform_data.primary: Sensitive value changes. a secret or credential changes; dependents must pick up the new value"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "plan.json"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "module.database.terraform_data.primary",
+                  "kind": "resource"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "tfdiffFinding/v1": "3ef9a4268fa4baf9eafec2049c73772965619854fabda4aa1c64eddcb15882dc"
+          },
+          "properties": {
+            "severity": "info",
+            "confidence": "high",
+            "evidence": [
+              "action: REPLACE (delete, create)",
+              "environment: production",
+              "dependents: 4 direct, 2 indirect",
+              "paths: input.password"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

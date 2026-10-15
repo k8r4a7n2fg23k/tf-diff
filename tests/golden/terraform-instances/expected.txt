@@ -1,0 +1,58 @@
+Terraform Semantic Diff
+────────────────────────────────────────────────────────────────────────
+Environment   not set (resource tags decide)
+Terraform     1.16.6 (plan format 1.2)
+Resources     15 inspected, 5 changed, 0 ignored
+Changes       3 update, 2 replace
+Risk          0 critical, 0 high, 1 medium, 2 low, 0 info
+warning: no environment: nothing sets it and no resource has an Environment or env tag, so production-only checks are off; set --environment
+────────────────────────────────────────────────────────────────────────
+
+MEDIUM   terraform_data.nic["a"]
+  action        REPLACE (delete, create)
+  why           the provider cannot update it in place
+  why           triggers_replace forces replacement
+  why           1 attribute(s) change: input
+  why           2 attribute(s) known only after apply
+  blast radius  5 direct, 0 indirect
+  score         55/100, confidence high
+                +25 medium finding (wide-blast-radius)
+                +15 replace: the old object is destroyed
+                +15 5 dependent resource(s)
+  MEDIUM   wide-blast-radius  Wide blast radius
+             5 resources depend on it (threshold 5)
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 5 direct, 0 indirect
+             affected: terraform_data.after, terraform_data.all, terraform_data.vm["a"], terraform_data.vm["b"], terraform_data.vm["c"]
+  LOW      replace-resource  Resource replaced
+             triggers_replace cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 5 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+             triggers_replace[0]: 1 -> 2
+
+LOW      terraform_data.disk[0]
+  action        REPLACE (delete, create)
+  why           replacement was requested with -replace
+  why           2 attribute(s) known only after apply
+  blast radius  3 direct, 0 indirect
+  score         34/100, confidence high
+                +10 low finding (replace-resource)
+                +15 replace: the old object is destroyed
+                +9 3 dependent resource(s)
+  LOW      replace-resource  Resource replaced
+             Terraform plans replacement (replace_by_request)
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 3 direct, 0 indirect
+             order: destroy before create: unavailable until the new one is up
+
+Other changes
+  update   terraform_data.all
+  update   terraform_data.attach[0]
+  update   terraform_data.vm["a"]

@@ -1,0 +1,1397 @@
+{
+  "schema_version": "1",
+  "tool": {
+    "name": "tf-diff",
+    "version": "0.1.0",
+    "rules_version": "1"
+  },
+  "plan": {
+    "format_version": "1.2",
+    "terraform_version": "1.16.6"
+  },
+  "environment": "production",
+  "summary": {
+    "resources": 18,
+    "changed": 10,
+    "ignored": 0,
+    "actions": {
+      "update": 7,
+      "replace": 3
+    },
+    "risk": {
+      "critical": 0,
+      "high": 3,
+      "medium": 6,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "warnings": [],
+  "findings": [
+    {
+      "rule": "remove-redundancy",
+      "severity": "high",
+      "resource": "module.compute.aws_autoscaling_group.web",
+      "title": "Redundancy may drop",
+      "reason": "vpc_zone_identifier spans 3 entries now and is unknown until apply",
+      "confidence": "low",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "vpc_zone_identifier",
+          "text": "3 -> (known after apply)"
+        }
+      ]
+    },
+    {
+      "rule": "remove-redundancy",
+      "severity": "high",
+      "resource": "module.compute.aws_lb.web",
+      "title": "Redundancy may drop",
+      "reason": "subnets spans 3 entries now and is unknown until apply",
+      "confidence": "low",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "subnets",
+          "text": "3 -> (known after apply)"
+        }
+      ]
+    },
+    {
+      "rule": "remove-redundancy",
+      "severity": "high",
+      "resource": "module.data.aws_db_subnet_group.main",
+      "title": "Redundancy may drop",
+      "reason": "subnet_ids spans 3 entries now and is unknown until apply",
+      "confidence": "low",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 2 indirect"
+        },
+        {
+          "label": "subnet_ids",
+          "text": "3 -> (known after apply)"
+        }
+      ]
+    },
+    {
+      "rule": "replace-resource",
+      "severity": "medium",
+      "resource": "module.network.aws_subnet.private[\"eu-west-1a\"]",
+      "title": "Resource replaced",
+      "reason": "cidr_block cannot be updated in place",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "3 direct, 2 indirect"
+        },
+        {
+          "label": "order",
+          "text": "destroy before create: unavailable until the new one is up"
+        },
+        {
+          "label": "cidr_block",
+          "text": "\"10.20.0.0/24\" -> \"10.20.0.0/22\""
+        }
+      ]
+    },
+    {
+      "rule": "wide-blast-radius",
+      "severity": "medium",
+      "resource": "module.network.aws_subnet.private[\"eu-west-1a\"]",
+      "title": "Wide blast radius",
+      "reason": "5 resources depend on it (threshold 5)",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "3 direct, 2 indirect"
+        },
+        {
+          "label": "affected",
+          "text": "module.compute.aws_autoscaling_group.web, module.compute.aws_lb.web, module.data.aws_db_subnet_group.main, module.compute.aws_launch_template.web, module.data.aws_db_instance.orders"
+        }
+      ]
+    },
+    {
+      "rule": "replace-resource",
+      "severity": "medium",
+      "resource": "module.network.aws_subnet.private[\"eu-west-1b\"]",
+      "title": "Resource replaced",
+      "reason": "cidr_block cannot be updated in place",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "3 direct, 2 indirect"
+        },
+        {
+          "label": "order",
+          "text": "destroy before create: unavailable until the new one is up"
+        },
+        {
+          "label": "cidr_block",
+          "text": "\"10.20.1.0/24\" -> \"10.20.4.0/22\""
+        }
+      ]
+    },
+    {
+      "rule": "wide-blast-radius",
+      "severity": "medium",
+      "resource": "module.network.aws_subnet.private[\"eu-west-1b\"]",
+      "title": "Wide blast radius",
+      "reason": "5 resources depend on it (threshold 5)",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "3 direct, 2 indirect"
+        },
+        {
+          "label": "affected",
+          "text": "module.compute.aws_autoscaling_group.web, module.compute.aws_lb.web, module.data.aws_db_subnet_group.main, module.compute.aws_launch_template.web, module.data.aws_db_instance.orders"
+        }
+      ]
+    },
+    {
+      "rule": "replace-resource",
+      "severity": "medium",
+      "resource": "module.network.aws_subnet.private[\"eu-west-1c\"]",
+      "title": "Resource replaced",
+      "reason": "cidr_block cannot be updated in place",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "3 direct, 2 indirect"
+        },
+        {
+          "label": "order",
+          "text": "destroy before create: unavailable until the new one is up"
+        },
+        {
+          "label": "cidr_block",
+          "text": "\"10.20.2.0/24\" -> \"10.20.8.0/22\""
+        }
+      ]
+    },
+    {
+      "rule": "wide-blast-radius",
+      "severity": "medium",
+      "resource": "module.network.aws_subnet.private[\"eu-west-1c\"]",
+      "title": "Wide blast radius",
+      "reason": "5 resources depend on it (threshold 5)",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "3 direct, 2 indirect"
+        },
+        {
+          "label": "affected",
+          "text": "module.compute.aws_autoscaling_group.web, module.compute.aws_lb.web, module.data.aws_db_subnet_group.main, module.compute.aws_launch_template.web, module.data.aws_db_instance.orders"
+        }
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "address": "module.compute.aws_autoscaling_group.web",
+      "type": "aws_autoscaling_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "vpc_zone_identifier[0]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-1ea6cc96ce97accce"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "vpc_zone_identifier[1]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-3bd97c3c49a2b4de2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "vpc_zone_identifier[2]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-853638e3f2c91c5d3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.compute.aws_launch_template.web",
+        "module.network.aws_subnet.private[\"eu-west-1a\"]",
+        "module.network.aws_subnet.private[\"eu-west-1b\"]",
+        "module.network.aws_subnet.private[\"eu-west-1c\"]"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 50,
+        "confidence": "low",
+        "factors": [
+          "+40 high finding (remove-redundancy)",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "remove-redundancy"
+      ]
+    },
+    {
+      "address": "module.compute.aws_launch_template.web",
+      "type": "aws_launch_template",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "2 attribute(s) change: tag_specifications[0].resource_type, tag_specifications[0].tags.Environment",
+        "1 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "latest_version",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": 1
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "tag_specifications[0].resource_type",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "launch-template"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "tag_specifications[0].tags.Environment",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "production"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.data.aws_db_instance.orders"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_autoscaling_group.web"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.compute.aws_lb.web",
+      "type": "aws_lb",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "2 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "subnet_mapping[0].allocation_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].ipv6_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].outpost_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].private_ipv4_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[0].subnet_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-1ea6cc96ce97accce"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].allocation_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].ipv6_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].outpost_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].private_ipv4_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[1].subnet_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-3bd97c3c49a2b4de2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].allocation_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].ipv6_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].outpost_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].private_ipv4_address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_mapping[2].subnet_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-853638e3f2c91c5d3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnets[0]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-1ea6cc96ce97accce"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnets[1]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-3bd97c3c49a2b4de2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnets[2]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-853638e3f2c91c5d3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_security_group.web",
+        "module.network.aws_subnet.private[\"eu-west-1a\"]",
+        "module.network.aws_subnet.private[\"eu-west-1b\"]",
+        "module.network.aws_subnet.private[\"eu-west-1c\"]"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 50,
+        "confidence": "low",
+        "factors": [
+          "+40 high finding (remove-redundancy)",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "remove-redundancy"
+      ]
+    },
+    {
+      "address": "module.data.aws_db_subnet_group.main",
+      "type": "aws_db_subnet_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "subnet_ids[0]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-1ea6cc96ce97accce"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_ids[1]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-3bd97c3c49a2b4de2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "subnet_ids[2]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-853638e3f2c91c5d3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_subnet.private[\"eu-west-1a\"]",
+        "module.network.aws_subnet.private[\"eu-west-1b\"]",
+        "module.network.aws_subnet.private[\"eu-west-1c\"]"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.data.aws_db_instance.orders"
+        ],
+        "indirect": [
+          "module.compute.aws_autoscaling_group.web",
+          "module.compute.aws_launch_template.web"
+        ]
+      },
+      "score": {
+        "value": 59,
+        "confidence": "low",
+        "factors": [
+          "+40 high finding (remove-redundancy)",
+          "+10 production",
+          "+9 3 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "remove-redundancy"
+      ]
+    },
+    {
+      "address": "module.data.aws_s3_bucket.exports",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: tags_all.Environment"
+      ],
+      "attributes": [
+        {
+          "path": "tags_all.Environment",
+          "kind": "added",
+          "before": {
+            "state": "null",
+            "value": null
+          },
+          "after": {
+            "state": "known",
+            "value": "production"
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [
+          "module.data.aws_s3_bucket_public_access_block.exports"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.network.aws_security_group.web",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "4 attribute(s) change: ingress[1].cidr_blocks[0], ingress[1].from_port, ingress[1].protocol, ingress[1].to_port"
+      ],
+      "attributes": [
+        {
+          "path": "ingress[1].cidr_blocks[0]",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "10.0.0.0/8"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].from_port",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": 22
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].protocol",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "tcp"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ingress[1].to_port",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": 22
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_vpc.main"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_lb.web",
+          "module.network.aws_security_group_rule.ssh",
+          "module.network.aws_vpc_security_group_ingress_rule.db_from_web"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.network.aws_subnet.private[\"eu-west-1a\"]",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "the provider cannot update it in place",
+        "cidr_block forces replacement",
+        "7 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "arn",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:ec2:eu-west-1:123456789012:subnet/subnet-853638e3f2c91c5d3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "availability_zone_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "euw1-az3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "cidr_block",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "10.20.0.0/24"
+          },
+          "after": {
+            "state": "known",
+            "value": "10.20.0.0/22"
+          },
+          "forces_replacement": true
+        },
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-853638e3f2c91c5d3"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ipv6_cidr_block",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ipv6_cidr_block_association_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "owner_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "123456789012"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "private_dns_hostname_type_on_launch",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "ip-name"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_vpc.main"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_autoscaling_group.web",
+          "module.compute.aws_lb.web",
+          "module.data.aws_db_subnet_group.main"
+        ],
+        "indirect": [
+          "module.compute.aws_launch_template.web",
+          "module.data.aws_db_instance.orders"
+        ]
+      },
+      "score": {
+        "value": 65,
+        "confidence": "high",
+        "factors": [
+          "+25 medium finding (replace-resource)",
+          "+15 replace: the old object is destroyed",
+          "+10 production",
+          "+15 5 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "replace-resource",
+        "wide-blast-radius"
+      ]
+    },
+    {
+      "address": "module.network.aws_subnet.private[\"eu-west-1b\"]",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "the provider cannot update it in place",
+        "cidr_block forces replacement",
+        "7 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "arn",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:ec2:eu-west-1:123456789012:subnet/subnet-3bd97c3c49a2b4de2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "availability_zone_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "euw1-az1"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "cidr_block",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "10.20.1.0/24"
+          },
+          "after": {
+            "state": "known",
+            "value": "10.20.4.0/22"
+          },
+          "forces_replacement": true
+        },
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-3bd97c3c49a2b4de2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ipv6_cidr_block",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ipv6_cidr_block_association_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "owner_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "123456789012"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "private_dns_hostname_type_on_launch",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "ip-name"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_vpc.main"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_autoscaling_group.web",
+          "module.compute.aws_lb.web",
+          "module.data.aws_db_subnet_group.main"
+        ],
+        "indirect": [
+          "module.compute.aws_launch_template.web",
+          "module.data.aws_db_instance.orders"
+        ]
+      },
+      "score": {
+        "value": 65,
+        "confidence": "high",
+        "factors": [
+          "+25 medium finding (replace-resource)",
+          "+15 replace: the old object is destroyed",
+          "+10 production",
+          "+15 5 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "replace-resource",
+        "wide-blast-radius"
+      ]
+    },
+    {
+      "address": "module.network.aws_subnet.private[\"eu-west-1c\"]",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "the provider cannot update it in place",
+        "cidr_block forces replacement",
+        "7 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "arn",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:ec2:eu-west-1:123456789012:subnet/subnet-1ea6cc96ce97accce"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "availability_zone_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "euw1-az2"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "cidr_block",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "10.20.2.0/24"
+          },
+          "after": {
+            "state": "known",
+            "value": "10.20.8.0/22"
+          },
+          "forces_replacement": true
+        },
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "subnet-1ea6cc96ce97accce"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ipv6_cidr_block",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "ipv6_cidr_block_association_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": ""
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "owner_id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "123456789012"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "private_dns_hostname_type_on_launch",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "ip-name"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_vpc.main"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.compute.aws_autoscaling_group.web",
+          "module.compute.aws_lb.web",
+          "module.data.aws_db_subnet_group.main"
+        ],
+        "indirect": [
+          "module.compute.aws_launch_template.web",
+          "module.data.aws_db_instance.orders"
+        ]
+      },
+      "score": {
+        "value": 65,
+        "confidence": "high",
+        "factors": [
+          "+25 medium finding (replace-resource)",
+          "+15 replace: the old object is destroyed",
+          "+10 production",
+          "+15 5 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "replace-resource",
+        "wide-blast-radius"
+      ]
+    },
+    {
+      "address": "module.network.aws_vpc_security_group_ingress_rule.db_from_web",
+      "type": "aws_vpc_security_group_ingress_rule",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: referenced_security_group_id"
+      ],
+      "attributes": [
+        {
+          "path": "referenced_security_group_id",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "123456789012/sg-e5a6bb1ebd2d056e8"
+          },
+          "after": {
+            "state": "known",
+            "value": "sg-e5a6bb1ebd2d056e8"
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.network.aws_security_group.db",
+        "module.network.aws_security_group.web"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    }
+  ],
+  "ignored": []
+}
