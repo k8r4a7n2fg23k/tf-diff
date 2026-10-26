@@ -9,7 +9,7 @@ import pytest
 from typer.testing import CliRunner
 
 from factories import GOLDEN
-from tfdiff import cli
+from tfdiff import __version__, cli
 from tfdiff.rules.registry import RULES
 
 AWS = (GOLDEN / "aws-production" / "plan.json").as_posix()
@@ -82,7 +82,7 @@ def test_listing_commands() -> None:
         rule.id for rule in RULES
     )
     _, version, _ = _invoke("version")
-    assert version.startswith("tf-diff 0.1.0 (rules 1, report schema 1)")
+    assert version.startswith(f"tf-diff {__version__} (rules 1, report schema 1)")
     _, schema, _ = _invoke("schema")
     assert json.loads(schema)["title"] == "tf-diff report, schema version 1"
 

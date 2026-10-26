@@ -22,6 +22,7 @@ import re
 from collections import Counter
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
+from typing import TypeAlias
 
 from pydantic import JsonValue
 
@@ -43,8 +44,8 @@ _INSTANCE = re.compile(
     rf"((?:module\.[^.\[]+(?:{_INDEX})?\.)*)(?:data\.)?[^.\[]+\.[^.\[]+({_INDEX})?"
 )
 
-type Module = tuple[str, ...]
-type Node = dict[str, JsonValue]
+Module: TypeAlias = tuple[str, ...]
+Node: TypeAlias = dict[str, JsonValue]
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,7 +78,7 @@ class _Link:
     keyed: bool = False
 
 
-def _edges(resolver: _Resolver, nodes: Iterable[str]) -> list[tuple[str, str]]:
+def _edges(resolver: "_Resolver", nodes: Iterable[str]) -> list[tuple[str, str]]:
     instances: dict[str, list[str]] = {}
     for node in sorted(nodes):
         instances.setdefault(config_address(node), []).append(node)
@@ -152,7 +153,7 @@ def _through_absent(
     return found
 
 
-def _configured(resolver: _Resolver) -> dict[str, frozenset[str]]:
+def _configured(resolver: "_Resolver") -> dict[str, frozenset[str]]:
     # an attribute missing here is computed or defaulted by the provider: on a replace Terraform
     # marks every such attribute unknown, so its unknown says nothing about what the author wants
     return {
@@ -162,7 +163,7 @@ def _configured(resolver: _Resolver) -> dict[str, frozenset[str]]:
     }
 
 
-def _through_locals(resolver: _Resolver) -> list[str]:
+def _through_locals(resolver: "_Resolver") -> list[str]:
     users = [
         address
         for module in resolver.resources.values()

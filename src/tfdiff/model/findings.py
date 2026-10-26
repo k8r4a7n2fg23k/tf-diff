@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from enum import StrEnum
+
+from tfdiff.model.enums import StrEnum
 
 
 class Severity(StrEnum):

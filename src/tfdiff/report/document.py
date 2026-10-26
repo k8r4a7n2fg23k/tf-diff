@@ -2,6 +2,7 @@
 
 import json
 from importlib import resources
+from typing import TypeAlias
 
 from tfdiff import __version__
 from tfdiff.model.findings import Finding
@@ -12,7 +13,7 @@ from tfdiff.model.values import Known, Null, Sensitive, Unknown, Value, show_pat
 # bump on a breaking change to the JSON shape; independent of the app version
 SCHEMA_VERSION = "1"
 
-type Document = dict[str, object]
+Document: TypeAlias = dict[str, object]
 
 
 def schema() -> str:

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from enum import StrEnum
 
+from tfdiff.model.enums import StrEnum
 from tfdiff.model.graph import Graph
 from tfdiff.model.values import Attributes, Path
 

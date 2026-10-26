@@ -29,7 +29,7 @@ from collections.abc import Callable, Iterator
 from dataclasses import asdict, dataclass, replace
 from functools import partial
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeAlias, TypeVar
 
 from rich.console import Console
 
@@ -63,7 +63,8 @@ POLICY = json.dumps(
 )
 
 # generated plan JSON: nested freely; tf-diff checks it when it reads it
-type Json = dict[str, Any]
+Json: TypeAlias = dict[str, Any]
+_T = TypeVar("_T")
 
 
 # ---------------------------------------------------------------------------- plan generation
@@ -489,7 +490,7 @@ def measure(plan: Path, shape: str) -> Result:
     """Run every stage once in this process and time it."""
     stages: dict[str, Stage] = {}
 
-    def stage[T](name: str, run: Callable[[], T]) -> T:
+    def stage(name: str, run: Callable[[], _T]) -> _T:
         gc.collect()
         wall, cpu = time.perf_counter(), time.process_time()
         result = run()

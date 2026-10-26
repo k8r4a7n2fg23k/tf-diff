@@ -5,12 +5,21 @@ description = "Terraform Semantic Diff & Infra Risk Analyzer"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+]
 dependencies = [
     "pydantic>=2",
     "pyyaml",
     "rich",
     "typer",
+    "typing-extensions>=4.4",
 ]
 
 [project.scripts]
@@ -38,7 +47,7 @@ build-backend = "hatchling.build"
 packages = ["src/tfdiff"]
 
 [tool.ruff]
-target-version = "py314"
+target-version = "py310"
 line-length = 100
 src = ["scripts", "src", "tests"]
 
@@ -88,7 +97,7 @@ ban-relative-imports = "all"
 "pickle".msg = "Input is untrusted."
 
 [tool.mypy]
-python_version = "3.14"
+python_version = "3.10"
 strict = true
 warn_unreachable = true
 enable_error_code = [

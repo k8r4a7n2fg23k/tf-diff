@@ -2,9 +2,10 @@ import json
 import math
 import re
 from dataclasses import dataclass
+from typing import TypeAlias
 
-type Scalar = str | int | float | bool
-type Path = tuple[str | int, ...]
+Scalar: TypeAlias = str | int | float | bool
+Path: TypeAlias = tuple[str | int, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,11 +30,11 @@ class Sensitive:
     is_changed: bool
 
 
-type Value = Known | Unknown | Null | Sensitive
+Value: TypeAlias = Known | Unknown | Null | Sensitive
 
 # Flattened attribute tree: one entry per scalar leaf, sorted by path. An Unknown or Sensitive
 # entry stands for its whole subtree.
-type Attributes = tuple[tuple[Path, Value], ...]
+Attributes: TypeAlias = tuple[tuple[Path, Value], ...]
 
 NULL = Null()
 _IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_-]*")

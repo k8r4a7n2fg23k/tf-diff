@@ -4,6 +4,7 @@ A computed attribute turns unknown on every replace whatever it will hold, so it
 """
 
 from collections.abc import Callable, Iterator
+from typing import TypeAlias
 
 import pytest
 
@@ -13,7 +14,7 @@ from tfdiff.rules.aws import rds, s3
 from tfdiff.rules.generic import capacity, encryption
 from tfdiff.rules.rule import Context
 
-type Evaluate = Callable[[Context], Iterator[Finding]]
+Evaluate: TypeAlias = Callable[[Context], Iterator[Finding]]
 
 CASES = [
     pytest.param(capacity.reduce, "aws_autoscaling_group.web", {"min_size": 4}, id="capacity"),

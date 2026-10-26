@@ -7,18 +7,20 @@ import os
 import sys
 from collections.abc import Iterator
 from contextlib import contextmanager
-from enum import IntEnum, StrEnum
+from enum import IntEnum
 from pathlib import Path
-from typing import Annotated, override
+from typing import Annotated
 from urllib.parse import quote
 
 import typer
 from rich.console import Console
+from typing_extensions import override
 
 from tfdiff import __version__, config
 from tfdiff.analysis.engine import analyze as run_analysis
 from tfdiff.analysis.engine import lookup
 from tfdiff.model import graph as graphs
+from tfdiff.model.enums import StrEnum
 from tfdiff.model.errors import ConfigError, InputError, TfDiffError
 from tfdiff.model.findings import Confidence, Severity
 from tfdiff.model.plan import Plan

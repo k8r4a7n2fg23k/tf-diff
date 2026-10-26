@@ -9,6 +9,7 @@ import copy
 import sys
 from collections import defaultdict
 from pathlib import Path
+from typing import TypeAlias
 
 MOCK_ASSERTS = frozenset(
     {
@@ -35,7 +36,7 @@ PATCHERS = frozenset({"delattr", "object", "patch", "setattr", "setitem"})
 OWN_PACKAGE = "tfdiff."
 MAX_CLONES = 2
 
-type TestFn = ast.FunctionDef | ast.AsyncFunctionDef
+TestFn: TypeAlias = ast.FunctionDef | ast.AsyncFunctionDef
 
 
 def call_name(func: ast.expr) -> str:

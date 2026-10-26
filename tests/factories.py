@@ -3,6 +3,7 @@
 import json
 import re
 from pathlib import Path
+from typing import TypeAlias
 
 from tfdiff.analysis.diff import diff
 from tfdiff.model.findings import Finding
@@ -16,7 +17,7 @@ ROOT = Path(__file__).parent
 GOLDEN = ROOT / "golden"
 NO_BLAST = BlastRadius((), ())
 
-type Raw = dict[str, object]
+Raw: TypeAlias = dict[str, object]
 
 
 def resource_change(  # noqa: PLR0913  - mirrors the fields of a resource change
