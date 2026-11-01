@@ -37,7 +37,11 @@ Read-only: it never runs `apply` and never calls a cloud API.
   [docs/outputs.md](docs/outputs.md).
 - 10k-resource plan in ~4.5 s and ~220 MB. See [docs/performance.md](docs/performance.md).
 
+What changed between versions: [CHANGELOG.md](CHANGELOG.md).
+
 ## Usage
+
+Python 3.10 or newer.
 
 ```bash
 uv sync
