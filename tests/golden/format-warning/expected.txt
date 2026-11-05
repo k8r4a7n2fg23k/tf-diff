@@ -8,7 +8,7 @@ Risk          0 critical, 0 high, 0 medium, 0 low, 0 info
 warning: plan format 1.9 is newer than tested 1.2: unknown fields are ignored
 warning: plan is incomplete (deferred changes): more changes follow next run
 warning: plan has no configuration: dependency graph is empty
-warning: no environment: nothing sets it and no resource has an Environment or env tag, so production-only checks are off; set --environment
+warning: no environment: nothing sets it and no resource has an environment tag (Environment, env), so production-only checks are off; set --environment
 ────────────────────────────────────────────────────────────────────────
 
 Other changes

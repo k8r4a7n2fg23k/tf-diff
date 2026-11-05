@@ -4,7 +4,7 @@
 **Environment:** not set · **Resources:** 15 inspected, 5 changed, 0 ignored
 **Changes:** 3 update, 2 replace
 
-> warning: no environment: nothing sets it and no resource has an Environment or env tag, so production-only checks are off; set --environment
+> warning: no environment: nothing sets it and no resource has an environment tag (Environment, env), so production-only checks are off; set --environment
 
 | Severity | Findings |
 |---|---|

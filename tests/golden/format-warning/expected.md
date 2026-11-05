@@ -10,7 +10,7 @@
 
 > warning: plan has no configuration: dependency graph is empty
 
-> warning: no environment: nothing sets it and no resource has an Environment or env tag, so production-only checks are off; set --environment
+> warning: no environment: nothing sets it and no resource has an environment tag (Environment, env), so production-only checks are off; set --environment
 
 | Severity | Findings |
 |---|---|

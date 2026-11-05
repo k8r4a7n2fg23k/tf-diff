@@ -8,11 +8,9 @@ from tfdiff.model.plan import Change
 from tfdiff.model.settings import Settings
 from tfdiff.model.values import Path, Value, show, show_path
 
-PRODUCTION = frozenset({"production", "prod", "prd"})
 
-
-def is_production(environment: str | None) -> bool:
-    return environment is not None and environment.casefold() in PRODUCTION
+def is_production(environment: str | None, settings: Settings) -> bool:
+    return environment is not None and environment.casefold() in settings.production_names
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,7 +25,7 @@ class Context:
 
     @property
     def is_production(self) -> bool:
-        return is_production(self.environment)
+        return is_production(self.environment, self.settings)
 
     def is_configured(self, path: Path) -> bool:
         """Whether the author sets the attribute; True when the plan has no configuration.

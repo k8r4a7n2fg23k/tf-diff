@@ -5,7 +5,7 @@ Terraform     1.16.6 (plan format 1.2)
 Resources     15 inspected, 5 changed, 0 ignored
 Changes       3 update, 2 replace
 Risk          0 critical, 0 high, 1 medium, 2 low, 0 info
-warning: no environment: nothing sets it and no resource has an Environment or env tag, so production-only checks are off; set --environment
+warning: no environment: nothing sets it and no resource has an environment tag (Environment, env), so production-only checks are off; set --environment
 ────────────────────────────────────────────────────────────────────────
 
 MEDIUM   terraform_data.nic["a"]

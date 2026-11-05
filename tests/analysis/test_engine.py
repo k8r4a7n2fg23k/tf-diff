@@ -217,8 +217,8 @@ def test_mixed_tags_leave_untagged_resources_without_environment() -> None:
 def test_no_environment_at_all_is_a_warning() -> None:
     report = analyze(parse(_stack()), Settings())
     assert report.warnings == (
-        "no environment: nothing sets it and no resource has an Environment or env tag, so "
-        "production-only checks are off; set --environment",
+        "no environment: nothing sets it and no resource has an environment tag "
+        "(Environment, env), so production-only checks are off; set --environment",
     )
     assert analyze(parse(_stack()), Settings(environment="dev")).warnings == ()
 
@@ -277,6 +277,8 @@ def _tagged(before: object, after: object, actions: tuple[str, ...] = ("update",
             "production",
         ),
         ({"tags": {"env": " ", "Environment": "qa"}}, {}, ("delete",), "qa"),
+        # a blank value under the first key must not shadow the next one
+        ({"tags": {"Environment": " ", "env": "qa"}}, {}, ("delete",), "qa"),
         ({"tags": {"Environment": "dev", "env": "prod"}}, {}, ("delete",), "prod"),
         ({"tags": {"Environment": "dev", "env": "qa"}}, {}, ("delete",), "dev"),
     ],
@@ -298,8 +300,8 @@ def test_disagreeing_environment_tags_on_one_resource_are_a_warning() -> None:
     report = analyze(parse(plan_text(raw, configuration={"root_module": {}})), Settings())
     assert report.environment == "production"
     assert report.warnings == (
-        "Environment and env tags disagree on 1 resource(s) (aws_db_instance.db): production "
-        "counts if either says so, else Environment",
+        "environment tags (Environment, env) disagree on 1 resource(s) (aws_db_instance.db): "
+        "production counts if any says so, else the first listed tag the resource has",
     )
 
 
@@ -321,3 +323,72 @@ def test_data_source_tags_do_not_vote() -> None:
     report = analyze(parse(json.dumps(raw)), Settings())
     assert _asg(report) == ("production", ["destroy-production-resource"])
     assert report.warnings == ()
+
+
+NO_CONFIG: dict[str, object] = {"root_module": {}}
+STAGED = Settings(environment_tags=("Stage", "env"), production_names=frozenset({"prd", "live"}))
+
+
+@pytest.mark.parametrize(
+    ("tags", "expected"),
+    [
+        ({"stage": "qa"}, "qa"),
+        # the replaced default no longer counts
+        ({"Environment": "production"}, None),
+        # earlier in the list wins
+        ({"env": "dev", "Stage": "qa"}, "qa"),
+        # production wins over the order
+        ({"Stage": "qa", "env": "Live"}, "Live"),
+    ],
+)
+def test_configured_tag_keys_decide_the_environment(
+    tags: dict[str, str], expected: str | None
+) -> None:
+    raw = resource_change("aws_instance.logs", actions=("delete",), before={"tags": tags})
+    (change,) = parse(plan_text(raw)).changes
+    assert environment(change, STAGED) == expected
+
+
+@pytest.mark.parametrize(
+    ("settings", "severities"),
+    [
+        (STAGED, [Severity.CRITICAL]),
+        (Settings(environment="LIVE", production_names=frozenset({"live"})), [Severity.CRITICAL]),
+        # "prod" is not production once the names are replaced
+        (Settings(environment="prod", production_names=frozenset({"live"})), []),
+    ],
+)
+def test_configured_production_names_turn_on_production_checks(
+    settings: Settings, severities: list[Severity]
+) -> None:
+    raw = resource_change(
+        "aws_instance.logs", actions=("delete",), before={"tags": {"Stage": "live"}}
+    )
+    findings = analyze(parse(plan_text(raw)), settings).findings
+    assert [item.severity for item in findings if item.rule == "destroy-production-resource"] == (
+        severities
+    )
+
+
+def test_warnings_name_the_configured_tag_keys() -> None:
+    clash = resource_change(
+        "aws_instance.a", actions=("delete",), before={"tags": {"Stage": "qa", "env": "dev"}}
+    )
+    untagged = resource_change("aws_instance.b", actions=("delete",), before={})
+    assert analyze(parse(plan_text(clash, configuration=NO_CONFIG)), STAGED).warnings == (
+        "environment tags (Stage, env) disagree on 1 resource(s) (aws_instance.a): "
+        "production counts if any says so, else the first listed tag the resource has",
+    )
+    (missing,) = analyze(parse(plan_text(untagged, configuration=NO_CONFIG)), STAGED).warnings
+    assert "no resource has an environment tag (Stage, env)" in missing
+
+
+def test_with_three_keys_the_first_one_present_decides() -> None:
+    settings = Settings(environment_tags=("Stage", "env", "Environment"))
+    raw = resource_change(
+        "aws_instance.logs",
+        actions=("delete",),
+        before={"tags": {"Environment": "qa", "env": "dev"}},
+    )
+    (change,) = parse(plan_text(raw)).changes
+    assert environment(change, settings) == "dev"

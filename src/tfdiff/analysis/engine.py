@@ -17,8 +17,6 @@ from tfdiff.rules.rule import Context, is_production
 
 # addresses a warning names before it says how many more
 EXAMPLES = 3
-# tag keys, matched case-insensitively; the full name first when a resource has both
-ENVIRONMENT_TAGS = ("environment", "env")
 
 
 def analyze(plan: Plan, settings: Settings) -> Report:
@@ -95,7 +93,7 @@ def lookup(report: Report, plan: Plan, address: str) -> Assessment | None:
 
 def environment(change: Change, settings: Settings, fallback: str | None = None) -> str | None:
     """Pick the environment: settings, then the resource's own tag, then `fallback`."""
-    return settings.environment or tagged(change) or fallback
+    return settings.environment or tagged(change, settings) or fallback
 
 
 def plan_environment(plan: Plan, settings: Settings) -> tuple[str | None, tuple[str, ...]]:
@@ -107,13 +105,13 @@ def plan_environment(plan: Plan, settings: Settings) -> tuple[str | None, tuple[
     infrastructure, so their tags say nothing about this stack.
     """
     managed = [change for change in plan.changes if change.resource.mode != "data"]
-    notes = _conflicts(managed)
+    notes = _conflicts(managed, settings)
     if settings.environment:
         return settings.environment, notes
     found: dict[str, str] = {}
     for change in managed:
-        if tag := tagged(change):
-            found.setdefault(_kind(tag), tag)
+        if tag := tagged(change, settings):
+            found.setdefault(_kind(tag, settings), tag)
     if len(found) == 1:
         return next(iter(found.values())), notes
     if all(change.action in QUIET for change in plan.changes):
@@ -127,28 +125,34 @@ def plan_environment(plan: Plan, settings: Settings) -> tuple[str | None, tuple[
         )
     return None, (
         *notes,
-        "no environment: nothing sets it and no resource has an Environment or env tag, so "
-        "production-only checks are off; set --environment",
+        "no environment: nothing sets it and no resource has an environment tag "
+        f"({', '.join(settings.environment_tags)}), so production-only checks are off; "
+        "set --environment",
     )
 
 
-def tagged(change: Change) -> str | None:
+def tagged(change: Change, settings: Settings) -> str | None:
     """Return the environment a resource is tagged with: the strictest, when it has several.
 
     Before and after both count: a replace destroys the object the old tag describes and an
     update changes it while it is still there, so production on either side is production.
     """
-    names = [*_side(change.after), *_side(change.before)]
-    production = [name for name in names if _kind(name) == "production"]
+    keys = _keys(settings)
+    names = [*_side(change.after, keys), *_side(change.before, keys)]
+    production = [name for name in names if _kind(name, settings) == "production"]
     return next(iter(production or names), None)
 
 
-def _kind(name: str) -> str:
-    return "production" if is_production(name) else name.casefold()
+def _kind(name: str, settings: Settings) -> str:
+    return "production" if is_production(name, settings) else name.casefold()
 
 
-def _side(attributes: Attributes) -> list[str]:
-    """Environment tag values on one side, `Environment` before `env`.
+def _keys(settings: Settings) -> tuple[str, ...]:
+    return tuple(key.casefold() for key in settings.environment_tags)
+
+
+def _side(attributes: Attributes, keys: tuple[str, ...]) -> list[str]:
+    """Environment tag values on one side, in the order of `keys` (casefolded).
 
     `tags_all` is `tags` with the provider's `default_tags` under it, so it already holds the
     value that wins; `tags` counts only for resources without `tags_all`.
@@ -157,26 +161,28 @@ def _side(attributes: Attributes) -> list[str]:
     for path, value in attributes:
         match path, value:
             case (("tags" | "tags_all") as block, str(key)), Known(value=str(name)):
-                if key.lower() in ENVIRONMENT_TAGS and name.strip():
-                    found[block].setdefault(key.lower(), name.strip())
+                if key.casefold() in keys and name.strip():
+                    found[block].setdefault(key.casefold(), name.strip())
     tags = found["tags_all"] or found["tags"]
-    return [tags[key] for key in ENVIRONMENT_TAGS if key in tags]
+    return [tags[key] for key in keys if key in tags]
 
 
-def _conflicts(changes: list[Change]) -> tuple[str, ...]:
+def _conflicts(changes: list[Change], settings: Settings) -> tuple[str, ...]:
+    keys = _keys(settings)
     clashing = [
         change.address
         for change in changes
         if any(
-            len({_kind(name) for name in _side(side)}) > 1 for side in (change.before, change.after)
+            len({_kind(name, settings) for name in _side(side, keys)}) > 1
+            for side in (change.before, change.after)
         )
     ]
     if not clashing:
         return ()
     return (
-        f"Environment and env tags disagree on {len(clashing)} resource(s) "
-        f"({shortlist(clashing, EXAMPLES)}): "
-        "production counts if either says so, else Environment",
+        f"environment tags ({', '.join(settings.environment_tags)}) disagree on "
+        f"{len(clashing)} resource(s) ({shortlist(clashing, EXAMPLES)}): production counts if "
+        "any says so, else the first listed tag the resource has",
     )
 
 

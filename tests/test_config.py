@@ -74,6 +74,16 @@ def test_file_settings_reach_the_model() -> None:
         ("- a\n- b\n", "top level must be a mapping"),
         ("a: [unclosed\n", "not valid YAML at line"),
         ("x: !!python/object/apply:os.system ['echo CANARY']\n", "not valid YAML"),
+        ("environment_tags: []\n", "environment_tags: empty"),
+        ("environment_tags:\n", "environment_tags: empty"),
+        ("production_names: []\n", "production_names: empty"),
+        ("environment_tags: [Stage, ' ']\n", "environment_tags.1: blank"),
+        ("environment_tags: [env, ENV]\n", "environment_tags.1: ENV repeats an earlier entry"),
+        (
+            "production_names: [prod, live, Live]\n",
+            "production_names.2: Live repeats an earlier entry",
+        ),
+        ("environment_tags: Stage\n", "environment_tags: Input should be a valid list"),
     ],
     ids=[
         "rule",
@@ -85,6 +95,13 @@ def test_file_settings_reach_the_model() -> None:
         "list",
         "syntax",
         "python-tag",
+        "no-tags",
+        "null-tags",
+        "no-production-names",
+        "blank-tag",
+        "duplicate-tag",
+        "duplicate-name",
+        "tags-not-a-list",
     ],
 )
 def test_bad_config_is_config_error(text: str, message: str) -> None:
@@ -97,3 +114,12 @@ def test_sections_with_every_entry_commented_out_are_empty() -> None:
     text = "rules:\n  # reduce-capacity: {}\nignore:\n  # - module.test.*\n"
     settings = load(text, {})
     assert (settings.disabled, settings.ignore) == (frozenset(), ())
+
+
+def test_environment_lists_replace_the_defaults() -> None:
+    defaults = load(None, {})
+    assert defaults.environment_tags == ("Environment", "env")
+    assert defaults.production_names == {"production", "prod", "prd"}
+    settings = load("environment_tags: [' Stage ', env_name]\nproduction_names: [PRD, Live]\n", {})
+    assert settings.environment_tags == ("Stage", "env_name")
+    assert settings.production_names == {"prd", "live"}
