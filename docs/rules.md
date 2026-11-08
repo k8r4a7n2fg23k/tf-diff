@@ -13,17 +13,20 @@ merge. `--fail-on-confidence low` changes that. Severities and on/off are per ru
 
 ## Environment
 
-Production is `production`, `prod` or `prd`, any case. The environment comes from
-`--environment`, then `TF_DIFF_ENVIRONMENT`, then the config file; blank counts as unset. If none
-is set, the `Environment` / `env` tag of each resource decides:
+Production is `production`, `prod` or `prd`, any case; `production_names` in the config replaces
+that list. The environment comes from `--environment`, then `TF_DIFF_ENVIRONMENT`, then the config
+file; blank counts as unset. If none is set, each resource's tags decide. The keys are
+`Environment` and `env` unless `environment_tags` says otherwise (any case, earlier in the list
+wins):
 
 - `tags_all` first, since it includes the provider's `default_tags`.
 - Tags before and after the change both count, production wins. Replacing a prod database with
   one tagged staging still destroys a prod database.
-- `Environment` and `env` disagree on a resource: production wins, otherwise `Environment`, and
-  the report warns.
-- Untagged resources (ASGs, SG rules) get the environment all tagged resources share; `prod` and
-  `production` are the same here. Data source tags are skipped, they often point at shared infra.
+- Two keys disagree on a resource: production wins, otherwise the first key in the list that the
+  resource has, and the report warns.
+- Untagged resources (ASGs, SG rules) get the environment all tagged resources share; all
+  production names count as the same here. Data source tags are skipped, they often point at
+  shared infra.
 - Tags disagree or nothing is tagged: untagged resources get no environment and the report warns
   that prod-only checks are off.
 

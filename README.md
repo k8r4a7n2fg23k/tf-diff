@@ -74,7 +74,9 @@ Exit codes: `0` ok, `1` check failed, `2` bad input (plan, address or CLI option
 `.tf-diff.yaml`. Precedence: defaults < file < `TF_DIFF_ENVIRONMENT` < flags.
 
 ```yaml
-environment: production     # otherwise Environment / env tags decide, see docs/rules.md
+environment: production     # otherwise resource tags decide, see docs/rules.md
+environment_tags: [Stage, env]          # tag keys to read it from; default [Environment, env]
+production_names: [production, live]    # what counts as prod; default [production, prod, prd]
 fail_on: high
 fail_on_confidence: high    # low: also fail when the deciding value is unknown until apply
 rules:
@@ -90,7 +92,8 @@ ignore:
   - module.sandbox.*        # full address; * and ? are wildcards, [ ] is literal
 ```
 
-Unknown keys and rule ids fail with exit 3, so a typo can't quietly turn a rule off.
+Unknown keys and rule ids fail with exit 3, so a typo can't quietly turn a rule off. Same for an
+empty `environment_tags` / `production_names` or duplicates in them.
 
 ## CI
 

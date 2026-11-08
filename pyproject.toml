@@ -1,6 +1,6 @@
 [project]
 name = "tf-diff"
-version = "0.2.0"
+version = "0.3.0"
 description = "Terraform Semantic Diff & Infra Risk Analyzer"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
