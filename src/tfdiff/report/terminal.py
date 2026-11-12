@@ -50,7 +50,8 @@ def render(console: Console, report: Report) -> None:
         console,
         "Resources",
         f"{report.inspected} inspected, {len(report.assessments)} changed, "
-        f"{len(report.ignored)} ignored",
+        f"{len(report.ignored)} ignored"
+        + (f", {len(report.suppressed)} findings suppressed" if report.suppressed else ""),
         0,
     )
     _row(
@@ -79,6 +80,20 @@ def render(console: Console, report: Report) -> None:
     for severity, assessment in flagged:
         _out(console)
         _assessment(console, assessment, severity)
+    if report.suppressed:
+        _out(console)
+        _out(console, ("Suppressed", "bold"))
+        width = max(len(muted.finding.rule) for muted in report.suppressed)
+        for muted in report.suppressed:
+            until = f" (until {muted.until})" if muted.until else ""
+            _out(
+                console,
+                "  ",
+                _severity(muted.finding.severity),
+                (muted.finding.rule.ljust(width), "bold"),
+                "  ",
+                f"{muted.finding.address}: {muted.reason}{until}",
+            )
     quiet = [assessment for assessment in report.assessments if not assessment.findings]
     if quiet:
         _out(console)

@@ -1,0 +1,788 @@
+{
+  "schema_version": "2",
+  "tool": {
+    "name": "tf-diff",
+    "version": "0.3.0",
+    "rules_version": "1"
+  },
+  "plan": {
+    "format_version": "1.2",
+    "terraform_version": "1.16.0"
+  },
+  "environment": "production",
+  "summary": {
+    "resources": 12,
+    "changed": 10,
+    "ignored": 0,
+    "suppressed": 2,
+    "actions": {
+      "create": 1,
+      "update": 7,
+      "delete": 1,
+      "replace": 1
+    },
+    "risk": {
+      "critical": 5,
+      "high": 1,
+      "medium": 0,
+      "low": 0,
+      "info": 1
+    }
+  },
+  "warnings": [
+    "1 resource(s) or module call(s) read locals (aws_cloudwatch_log_group.app): the plan JSON does not say what a local refers to, so dependencies through them are missing and blast radius may be low"
+  ],
+  "findings": [
+    {
+      "rule": "destroy-production-resource",
+      "severity": "critical",
+      "resource": "aws_s3_bucket.audit_logs",
+      "title": "Production resource destroyed",
+      "reason": "aws_s3_bucket is deleted in a production environment",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "DELETE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "terraform reason",
+          "text": "delete_because_no_resource_config"
+        }
+      ]
+    },
+    {
+      "rule": "stateful-data-loss",
+      "severity": "critical",
+      "resource": "aws_s3_bucket.audit_logs",
+      "title": "Data store deleted",
+      "reason": "aws_s3_bucket holds data; it is removed, existing data is lost",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "DELETE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "terraform reason",
+          "text": "delete_because_no_resource_config"
+        }
+      ]
+    },
+    {
+      "rule": "security-group-wide-open",
+      "severity": "critical",
+      "resource": "aws_security_group.bastion",
+      "title": "Ingress opened to the internet",
+      "reason": "1 ingress rule(s) newly open to 0.0.0.0/0",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "2 direct, 0 indirect"
+        },
+        {
+          "label": "ingress",
+          "text": "tcp ports 22-22 from 0.0.0.0/0"
+        }
+      ]
+    },
+    {
+      "rule": "public-database",
+      "severity": "critical",
+      "resource": "module.analytics.aws_db_instance.reporting",
+      "title": "Database becomes publicly accessible",
+      "reason": "publicly_accessible turns on: the endpoint resolves to a public IP",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "publicly_accessible",
+          "text": "false -> true"
+        }
+      ]
+    },
+    {
+      "rule": "stateful-data-loss",
+      "severity": "critical",
+      "resource": "module.database.aws_db_instance.primary",
+      "title": "Data store replaced",
+      "reason": "aws_db_instance holds data; storage_type forces a new one, existing data is lost",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "3 direct, 1 indirect"
+        },
+        {
+          "label": "storage_type",
+          "text": "\"gp2\" -> \"io2\""
+        }
+      ]
+    },
+    {
+      "rule": "remove-redundancy",
+      "severity": "high",
+      "resource": "aws_autoscaling_group.web",
+      "title": "Redundancy removed",
+      "reason": "availability_zones drops from 3 entries to 1",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "UPDATE"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "0 direct, 0 indirect"
+        },
+        {
+          "label": "availability_zones",
+          "text": "3 -> 1"
+        }
+      ]
+    },
+    {
+      "rule": "sensitive-value-changed",
+      "severity": "info",
+      "resource": "module.database.aws_db_instance.primary",
+      "title": "Sensitive value changes",
+      "reason": "a secret or credential changes; dependents must pick up the new value",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "production"
+        },
+        {
+          "label": "dependents",
+          "text": "3 direct, 1 indirect"
+        },
+        {
+          "label": "paths",
+          "text": "password"
+        }
+      ]
+    }
+  ],
+  "suppressed": [
+    {
+      "finding": {
+        "rule": "reduce-capacity",
+        "severity": "high",
+        "resource": "module.api.aws_ecs_service.api",
+        "title": "Capacity reduced",
+        "reason": "desired_count drops by 67% (threshold 30%)",
+        "confidence": "high",
+        "evidence": [
+          {
+            "label": "action",
+            "text": "UPDATE"
+          },
+          {
+            "label": "environment",
+            "text": "production"
+          },
+          {
+            "label": "dependents",
+            "text": "0 direct, 0 indirect"
+          },
+          {
+            "label": "desired_count",
+            "text": "6 -> 2"
+          }
+        ]
+      },
+      "reason": "scaled down for the holiday freeze",
+      "until": null
+    },
+    {
+      "finding": {
+        "rule": "replace-resource",
+        "severity": "medium",
+        "resource": "module.database.aws_db_instance.primary",
+        "title": "Resource replaced",
+        "reason": "storage_type cannot be updated in place",
+        "confidence": "high",
+        "evidence": [
+          {
+            "label": "action",
+            "text": "REPLACE (delete, create)"
+          },
+          {
+            "label": "environment",
+            "text": "production"
+          },
+          {
+            "label": "dependents",
+            "text": "3 direct, 1 indirect"
+          },
+          {
+            "label": "order",
+            "text": "destroy before create: unavailable until the new one is up"
+          },
+          {
+            "label": "storage_type",
+            "text": "\"gp2\" -> \"io2\""
+          }
+        ]
+      },
+      "reason": "blue/green cutover, approved in CHG-1234",
+      "until": "2027-03-01"
+    }
+  ],
+  "changes": [
+    {
+      "address": "aws_autoscaling_group.web",
+      "type": "aws_autoscaling_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "2 attribute(s) change: availability_zones[1], availability_zones[2]"
+      ],
+      "attributes": [
+        {
+          "path": "availability_zones[1]",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "us-east-1b"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "availability_zones[2]",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "us-east-1c"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "aws_security_group.bastion",
+        "data.aws_ami.base"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 50,
+        "confidence": "high",
+        "factors": [
+          "+40 high finding (remove-redundancy)",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "remove-redundancy"
+      ]
+    },
+    {
+      "address": "aws_cloudwatch_log_group.app[\"api\"]",
+      "type": "aws_cloudwatch_log_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "create",
+      "actions": [
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "new resource"
+      ],
+      "attributes": [],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "aws_lb.public",
+      "type": "aws_lb",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: tags.Owner"
+      ],
+      "attributes": [
+        {
+          "path": "tags.Owner",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "web"
+          },
+          "after": {
+            "state": "known",
+            "value": "platform"
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "aws_security_group.bastion"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "aws_s3_bucket.audit_logs",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "delete",
+      "actions": [
+        "delete"
+      ],
+      "environment": "production",
+      "why": [
+        "the resource was removed from configuration"
+      ],
+      "attributes": [],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 85,
+        "confidence": "high",
+        "factors": [
+          "+60 critical finding (destroy-production-resource)",
+          "+15 delete: the old object is destroyed",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "destroy-production-resource",
+        "stateful-data-loss"
+      ]
+    },
+    {
+      "address": "aws_security_group.bastion",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: ingress[1].cidr_blocks[0]"
+      ],
+      "attributes": [
+        {
+          "path": "ingress[1].cidr_blocks[0]",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "203.0.113.0/24"
+          },
+          "after": {
+            "state": "known",
+            "value": "0.0.0.0/0"
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [
+          "aws_autoscaling_group.web",
+          "aws_lb.public"
+        ],
+        "indirect": []
+      },
+      "score": {
+        "value": 76,
+        "confidence": "high",
+        "factors": [
+          "+60 critical finding (security-group-wide-open)",
+          "+10 production",
+          "+6 2 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "security-group-wide-open"
+      ]
+    },
+    {
+      "address": "module.analytics.aws_db_instance.reporting",
+      "type": "aws_db_instance",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: publicly_accessible"
+      ],
+      "attributes": [
+        {
+          "path": "publicly_accessible",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": false
+          },
+          "after": {
+            "state": "known",
+            "value": true
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.database.aws_db_instance.primary"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": {
+        "value": 70,
+        "confidence": "high",
+        "factors": [
+          "+60 critical finding (public-database)",
+          "+10 production"
+        ]
+      },
+      "findings": [
+        "public-database"
+      ]
+    },
+    {
+      "address": "module.api.aws_ecs_service.api",
+      "type": "aws_ecs_service",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) change: desired_count",
+        "1 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "desired_count",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": 6
+          },
+          "after": {
+            "state": "known",
+            "value": 2
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "task_definition",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:ecs:us-east-1:123456789012:task-definition/api:41"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.api.aws_ecs_task_definition.api"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.api.aws_ecs_task_definition.api",
+      "type": "aws_ecs_task_definition",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "container_definitions",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "[{\"name\":\"api\",\"environment\":[{\"name\":\"DB_HOST\",\"value\":\"orders-db\"}]}]"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.database.aws_db_instance.primary"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.api.aws_ecs_service.api"
+        ],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.database.aws_db_instance.primary",
+      "type": "aws_db_instance",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": "production",
+      "why": [
+        "the provider cannot update it in place",
+        "storage_type forces replacement",
+        "1 attribute(s) change: password",
+        "3 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "address",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "orders-db.abcdefghijkl.us-east-1.rds.amazonaws.com"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "endpoint",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "orders-db.abcdefghijkl.us-east-1.rds.amazonaws.com:5432"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "db-ORDERS0000000000000000000"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "password",
+          "kind": "sensitive",
+          "before": {
+            "state": "sensitive",
+            "value": null
+          },
+          "after": {
+            "state": "sensitive",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "storage_type",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "gp2"
+          },
+          "after": {
+            "state": "known",
+            "value": "io2"
+          },
+          "forces_replacement": true
+        }
+      ],
+      "dependencies": [],
+      "blast_radius": {
+        "direct": [
+          "module.analytics.aws_db_instance.reporting",
+          "module.api.aws_ecs_task_definition.api",
+          "module.worker.aws_ecs_service.worker"
+        ],
+        "indirect": [
+          "module.api.aws_ecs_service.api"
+        ]
+      },
+      "score": {
+        "value": 97,
+        "confidence": "high",
+        "factors": [
+          "+60 critical finding (stateful-data-loss)",
+          "+15 replace: the old object is destroyed",
+          "+10 production",
+          "+12 4 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "stateful-data-loss",
+        "sensitive-value-changed"
+      ]
+    },
+    {
+      "address": "module.worker.aws_ecs_service.worker",
+      "type": "aws_ecs_service",
+      "mode": "managed",
+      "provider": "registry.terraform.io/hashicorp/aws",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": "production",
+      "why": [
+        "1 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "task_definition",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "arn:aws:ecs:us-east-1:123456789012:task-definition/worker:12"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.database.aws_db_instance.primary"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    }
+  ],
+  "ignored": []
+}

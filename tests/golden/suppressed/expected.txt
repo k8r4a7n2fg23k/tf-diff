@@ -1,0 +1,116 @@
+Terraform Semantic Diff
+────────────────────────────────────────────────────────────────────────
+Environment   production
+Terraform     1.16.0 (plan format 1.2)
+Resources     12 inspected, 10 changed, 0 ignored, 2 findings suppressed
+Changes       1 create, 7 update, 1 delete, 1 replace
+Risk          5 critical, 1 high, 0 medium, 0 low, 1 info
+warning: 1 resource(s) or module call(s) read locals (aws_cloudwatch_log_group.app): the plan JSON does not say what a local refers to, so dependencies through them are missing and blast radius may be low
+────────────────────────────────────────────────────────────────────────
+
+CRITICAL aws_s3_bucket.audit_logs
+  action        DELETE
+  why           the resource was removed from configuration
+  blast radius  0 direct, 0 indirect
+  score         85/100, confidence high
+                +60 critical finding (destroy-production-resource)
+                +15 delete: the old object is destroyed
+                +10 production
+  CRITICAL destroy-production-resource  Production resource destroyed
+             aws_s3_bucket is deleted in a production environment
+             confidence high
+             action: DELETE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             terraform reason: delete_because_no_resource_config
+  CRITICAL stateful-data-loss  Data store deleted
+             aws_s3_bucket holds data; it is removed, existing data is lost
+             confidence high
+             action: DELETE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             terraform reason: delete_because_no_resource_config
+
+CRITICAL aws_security_group.bastion
+  action        UPDATE
+  why           1 attribute(s) change: ingress[1].cidr_blocks[0]
+  blast radius  2 direct, 0 indirect
+  score         76/100, confidence high
+                +60 critical finding (security-group-wide-open)
+                +10 production
+                +6 2 dependent resource(s)
+  CRITICAL security-group-wide-open  Ingress opened to the internet
+             1 ingress rule(s) newly open to 0.0.0.0/0
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 2 direct, 0 indirect
+             ingress: tcp ports 22-22 from 0.0.0.0/0
+
+CRITICAL module.analytics.aws_db_instance.reporting
+  action        UPDATE
+  why           1 attribute(s) change: publicly_accessible
+  blast radius  0 direct, 0 indirect
+  score         70/100, confidence high
+                +60 critical finding (public-database)
+                +10 production
+  CRITICAL public-database  Database becomes publicly accessible
+             publicly_accessible turns on: the endpoint resolves to a public IP
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             publicly_accessible: false -> true
+
+CRITICAL module.database.aws_db_instance.primary
+  action        REPLACE (delete, create)
+  why           the provider cannot update it in place
+  why           storage_type forces replacement
+  why           1 attribute(s) change: password
+  why           3 attribute(s) known only after apply
+  blast radius  3 direct, 1 indirect
+  score         97/100, confidence high
+                +60 critical finding (stateful-data-loss)
+                +15 replace: the old object is destroyed
+                +10 production
+                +12 4 dependent resource(s)
+  CRITICAL stateful-data-loss  Data store replaced
+             aws_db_instance holds data; storage_type forces a new one, existing data is lost
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 3 direct, 1 indirect
+             storage_type: "gp2" -> "io2"
+  INFO     sensitive-value-changed  Sensitive value changes
+             a secret or credential changes; dependents must pick up the new value
+             confidence high
+             action: REPLACE (delete, create)
+             environment: production
+             dependents: 3 direct, 1 indirect
+             paths: password
+
+HIGH     aws_autoscaling_group.web
+  action        UPDATE
+  why           2 attribute(s) change: availability_zones[1], availability_zones[2]
+  blast radius  0 direct, 0 indirect
+  score         50/100, confidence high
+                +40 high finding (remove-redundancy)
+                +10 production
+  HIGH     remove-redundancy  Redundancy removed
+             availability_zones drops from 3 entries to 1
+             confidence high
+             action: UPDATE
+             environment: production
+             dependents: 0 direct, 0 indirect
+             availability_zones: 3 -> 1
+
+Suppressed
+  HIGH     reduce-capacity   module.api.aws_ecs_service.api: scaled down for the holiday freeze
+  MEDIUM   replace-resource  module.database.aws_db_instance.primary: blue/green cutover, approved in CHG-1234 (until 2027-03-01)
+
+Other changes
+  create   aws_cloudwatch_log_group.app["api"]
+  update   aws_lb.public
+  update   module.api.aws_ecs_service.api
+  update   module.api.aws_ecs_task_definition.api
+  update   module.worker.aws_ecs_service.worker

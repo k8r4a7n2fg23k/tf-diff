@@ -37,6 +37,7 @@ def render(report: Report) -> str:
         f"**Environment:** {_text(report.environment or 'not set')} · "
         f"**Resources:** {report.inspected} inspected, {len(report.assessments)} changed, "
         f"{len(report.ignored)} ignored"
+        + (f", {len(report.suppressed)} findings suppressed" if report.suppressed else "")
     )
     actions = ", ".join(f"{count} {action}" for action, count in action_counts(report).items())
     lines += [f"**Changes:** {actions or 'none'}", ""]
@@ -85,6 +86,20 @@ def render(report: Report) -> str:
             lines += [
                 f"- {_text(evidence.label)}: {_text(evidence.text)}" for evidence in found.evidence
             ]
+        lines += ["", "</details>", ""]
+    if report.suppressed:
+        lines += [
+            f"<details><summary>Suppressed findings ({len(report.suppressed)})</summary>",
+            "",
+            "| Severity | Resource | Finding | Reason | Until |",
+            "|---|---|---|---|---|",
+        ]
+        lines += [
+            f"| {muted.finding.severity} | {_code(muted.finding.address)} | "
+            f"{_text(muted.finding.title)} ({_code(muted.finding.rule)}) | "
+            f"{_text(muted.reason)} | {muted.until or '-'} |"
+            for muted in report.suppressed
+        ]
         lines += ["", "</details>", ""]
     quiet = [assessment for assessment in report.assessments if not assessment.findings]
     if quiet:

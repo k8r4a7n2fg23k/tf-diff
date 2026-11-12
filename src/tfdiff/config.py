@@ -4,13 +4,14 @@ Precedence: defaults < file < environment < flags.
 """
 
 from collections.abc import Mapping
+from datetime import date
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, ValidationInfo, field_validator
 
 from tfdiff.model.errors import SHOWN_ERRORS, ConfigError
 from tfdiff.model.findings import Confidence, Severity
-from tfdiff.model.settings import ENVIRONMENT_TAGS, PRODUCTION_NAMES, Settings
+from tfdiff.model.settings import ENVIRONMENT_TAGS, PRODUCTION_NAMES, Settings, Suppression
 from tfdiff.rules.registry import BY_ID
 
 FILENAME = ".tf-diff.yaml"
@@ -25,6 +26,23 @@ class RuleConfig(BaseModel):
     threshold: int | None = Field(default=None, ge=0)
 
 
+class SuppressConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    rule: str
+    resource: str
+    reason: str
+    until: date | None = None
+
+    @field_validator("until", mode="before")
+    @classmethod
+    def _no_timestamp(cls, value: object) -> object:
+        # pydantic reads a number as unix time: `until: 0` would be 1970-01-01
+        if isinstance(value, int | float):
+            raise ValueError("a date like 2027-03-01, not a number")  # noqa: TRY004  - pydantic wants ValueError
+        return value
+
+
 class FileConfig(BaseModel):
     # our own format, unlike plan JSON: an unknown key is a typo, fail on it
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -37,8 +55,11 @@ class FileConfig(BaseModel):
     fail_on_confidence: Confidence | None = None
     rules: dict[str, RuleConfig] = {}
     ignore: list[str] = []
+    suppress: list[SuppressConfig] = []
 
-    @field_validator("rules", "ignore", "environment_tags", "production_names", mode="before")
+    @field_validator(
+        "rules", "ignore", "suppress", "environment_tags", "production_names", mode="before"
+    )
     @classmethod
     def _empty_section(cls, value: object, info: ValidationInfo) -> object:
         # `rules:` with every entry commented out is null in YAML; an empty list of tags or
@@ -54,6 +75,7 @@ def load(  # noqa: PLR0913  - one keyword per flag that overrides the file
     environment: str | None = None,
     fail_on: Severity | None = None,
     fail_on_confidence: Confidence | None = None,
+    today: date | None = None,
     source: str = FILENAME,
 ) -> Settings:
     """Resolve settings; `text` is the config file content, None when there is no file."""
@@ -89,6 +111,27 @@ def load(  # noqa: PLR0913  - one keyword per flag that overrides the file
             if rule.threshold is not None
         },
         ignore=tuple(config.ignore),
+        suppress=_suppressions(source, config.suppress),
+        today=today,
+    )
+
+
+def _suppressions(source: str, entries: list[SuppressConfig]) -> tuple[Suppression, ...]:
+    seen: set[tuple[str, str]] = set()
+    for index, entry in enumerate(entries):
+        where = f"{source}: suppress.{index}"
+        if entry.rule not in BY_ID:
+            raise ConfigError(f"{where}.rule: unknown rule, see `tf-diff rules`")
+        for key, text in (("resource", entry.resource), ("reason", entry.reason)):
+            if not text.strip():
+                raise ConfigError(f"{where}.{key}: blank; say which resource and why")
+        if (entry.rule, entry.resource.strip()) in seen:
+            raise ConfigError(f"{where}: repeats an earlier entry for this rule and resource")
+        seen.add((entry.rule, entry.resource.strip()))
+    return tuple(
+        # one line: the reason goes into a Markdown table row and a terminal line
+        Suppression(entry.rule, entry.resource.strip(), " ".join(entry.reason.split()), entry.until)
+        for entry in entries
     )
 
 

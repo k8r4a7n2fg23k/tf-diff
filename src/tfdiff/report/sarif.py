@@ -34,6 +34,30 @@ def _fingerprint(found: Finding) -> str:
     return hashlib.sha256(f"{found.rule}\0{found.address}\0{labels}".encode()).hexdigest()
 
 
+def _result(found: Finding, index: int, artifact: str) -> Document:
+    return {
+        "ruleId": found.rule,
+        "ruleIndex": index,
+        "level": LEVELS[found.severity],
+        "message": {"text": f"{found.address}: {found.title}. {found.reason}"},
+        "locations": [
+            {
+                "physicalLocation": {
+                    "artifactLocation": {"uri": artifact},
+                    "region": {"startLine": 1},
+                },
+                "logicalLocations": [{"fullyQualifiedName": found.address, "kind": "resource"}],
+            }
+        ],
+        "partialFingerprints": {"tfdiffFinding/v1": _fingerprint(found)},
+        "properties": {
+            "severity": str(found.severity),
+            "confidence": str(found.confidence),
+            "evidence": [f"{evidence.label}: {evidence.text}" for evidence in found.evidence],
+        },
+    }
+
+
 def render(report: Report, artifact: str) -> str:
     """SARIF log; `artifact` is the plan path as the user gave it, the only file we can point at."""
     index = {rule.id: position for position, rule in enumerate(RULES)}
@@ -55,34 +79,21 @@ def render(report: Report, artifact: str) -> str:
             for rule in RULES
         ],
     }
-    results: list[Document] = [
+    active = [_result(found, index[found.rule], artifact) for found in report.findings]
+    quiet = [
         {
-            "ruleId": found.rule,
-            "ruleIndex": index[found.rule],
-            "level": LEVELS[found.severity],
-            "message": {"text": f"{found.address}: {found.title}. {found.reason}"},
-            "locations": [
-                {
-                    "physicalLocation": {
-                        "artifactLocation": {"uri": artifact},
-                        "region": {"startLine": 1},
-                    },
-                    "logicalLocations": [{"fullyQualifiedName": found.address, "kind": "resource"}],
-                }
-            ],
-            "partialFingerprints": {"tfdiffFinding/v1": _fingerprint(found)},
-            "properties": {
-                "severity": str(found.severity),
-                "confidence": str(found.confidence),
-                "evidence": [f"{evidence.label}: {evidence.text}" for evidence in found.evidence],
-            },
+            **_result(muted.finding, index[muted.finding.rule], artifact),
+            "suppressions": [{"kind": "external", "justification": muted.reason}],
         }
-        for found in report.findings[:MAX_RESULTS]
+        for muted in report.suppressed
     ]
+    # suppressed ones go last: they are the first to drop at the cap
+    results = [*active, *quiet][:MAX_RESULTS]
     run: Document = {"tool": {"driver": driver}, "results": results}
-    if left := len(report.findings) - len(results):
+    if left := len(active) + len(quiet) - len(results):
         notice = (
-            f"{left} least severe finding(s) left out: GitHub rejects a run of more than "
+            f"{left} finding(s) left out, suppressed ones first, then the least severe: GitHub "
+            "rejects a run of more than "
             f"{MAX_RESULTS} results; the JSON report has them all"
         )
         run["invocations"] = [

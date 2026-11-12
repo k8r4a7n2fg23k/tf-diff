@@ -7,6 +7,7 @@ import os
 import sys
 from collections.abc import Iterator
 from contextlib import contextmanager
+from datetime import datetime, timezone
 from enum import IntEnum
 from pathlib import Path
 from typing import Annotated
@@ -155,6 +156,8 @@ def _settings(
         environment=environment,
         fail_on=fail_on,
         fail_on_confidence=fail_on_confidence,
+        # UTC: CI runners and laptops agree on the day a suppression expires
+        today=datetime.now(timezone.utc).date(),
         source=str(candidate),
     )
 

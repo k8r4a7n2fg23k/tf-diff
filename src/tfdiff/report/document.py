@@ -1,4 +1,4 @@
-"""JSON report, schema `report-v1.json` (shipped next to this module)."""
+"""JSON report, schema `report-v2.json` (shipped next to this module)."""
 
 import json
 from importlib import resources
@@ -11,13 +11,13 @@ from tfdiff.model.report import Assessment, Report, action_counts, severity_coun
 from tfdiff.model.values import Known, Null, Sensitive, Unknown, Value, show_path
 
 # bump on a breaking change to the JSON shape; independent of the app version
-SCHEMA_VERSION = "1"
+SCHEMA_VERSION = "2"
 
 Document: TypeAlias = dict[str, object]
 
 
 def schema() -> str:
-    return resources.files("tfdiff.report").joinpath("report-v1.json").read_text(encoding="utf-8")
+    return resources.files("tfdiff.report").joinpath("report-v2.json").read_text(encoding="utf-8")
 
 
 def render(report: Report) -> str:
@@ -41,11 +41,20 @@ def build(report: Report) -> Document:
             "resources": report.inspected,
             "changed": len(report.assessments),
             "ignored": len(report.ignored),
+            "suppressed": len(report.suppressed),
             "actions": {str(action): count for action, count in action_counts(report).items()},
             "risk": {str(level): count for level, count in severity_counts(report).items()},
         },
         "warnings": list(report.warnings),
         "findings": [finding(found) for found in report.findings],
+        "suppressed": [
+            {
+                "finding": finding(muted.finding),
+                "reason": muted.reason,
+                "until": muted.until.isoformat() if muted.until else None,
+            }
+            for muted in report.suppressed
+        ],
         "changes": [assessment(assessed) for assessed in report.assessments],
         "ignored": list(report.ignored),
     }

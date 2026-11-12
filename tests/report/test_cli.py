@@ -82,9 +82,9 @@ def test_listing_commands() -> None:
         rule.id for rule in RULES
     )
     _, version, _ = _invoke("version")
-    assert version.startswith(f"tf-diff {__version__} (rules 1, report schema 1)")
+    assert version.startswith(f"tf-diff {__version__} (rules 1, report schema 2)")
     _, schema, _ = _invoke("schema")
-    assert json.loads(schema)["title"] == "tf-diff report, schema version 1"
+    assert json.loads(schema)["title"] == "tf-diff report, schema version 2"
 
 
 def test_missing_config_named_on_the_command_line(tmp_path: Path) -> None:

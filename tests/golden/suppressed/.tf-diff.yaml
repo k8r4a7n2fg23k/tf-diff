@@ -1,0 +1,8 @@
+suppress:
+  - rule: replace-resource
+    resource: module.database.aws_db_instance.primary
+    reason: blue/green cutover, approved in CHG-1234
+    until: 2027-03-01
+  - rule: reduce-capacity
+    resource: module.api.*
+    reason: scaled down for the holiday freeze

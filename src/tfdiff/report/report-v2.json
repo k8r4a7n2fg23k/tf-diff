@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tf-diff.example.com/schema/report-v1.json",
-  "title": "tf-diff report, schema version 1",
+  "$id": "https://tf-diff.example.com/schema/report-v2.json",
+  "title": "tf-diff report, schema version 2",
   "type": "object",
-  "required": ["schema_version", "tool", "plan", "environment", "summary", "warnings", "findings", "changes", "ignored"],
+  "required": ["schema_version", "tool", "plan", "environment", "summary", "warnings", "findings", "suppressed", "changes", "ignored"],
   "additionalProperties": false,
   "$defs": {
     "severity": {"enum": ["info", "low", "medium", "high", "critical"]},
@@ -21,6 +21,16 @@
       "then": {"properties": {"value": {"type": "null"}}}
     },
     "addresses": {"type": "array", "items": {"type": "string"}},
+    "suppressed": {
+      "type": "object",
+      "required": ["finding", "reason", "until"],
+      "additionalProperties": false,
+      "properties": {
+        "finding": {"$ref": "#/$defs/finding"},
+        "reason": {"type": "string", "minLength": 1},
+        "until": {"type": ["string", "null"], "format": "date"}
+      }
+    },
     "finding": {
       "type": "object",
       "required": ["rule", "severity", "resource", "title", "reason", "confidence", "evidence"],
@@ -99,7 +109,7 @@
     }
   },
   "properties": {
-    "schema_version": {"const": "1"},
+    "schema_version": {"const": "2"},
     "tool": {
       "type": "object",
       "required": ["name", "version", "rules_version"],
@@ -122,12 +132,13 @@
     "environment": {"type": ["string", "null"]},
     "summary": {
       "type": "object",
-      "required": ["resources", "changed", "ignored", "actions", "risk"],
+      "required": ["resources", "changed", "ignored", "suppressed", "actions", "risk"],
       "additionalProperties": false,
       "properties": {
         "resources": {"type": "integer", "minimum": 0},
         "changed": {"type": "integer", "minimum": 0},
         "ignored": {"type": "integer", "minimum": 0},
+        "suppressed": {"type": "integer", "minimum": 0},
         "actions": {
           "type": "object",
           "propertyNames": {"$ref": "#/$defs/action"},
@@ -149,6 +160,7 @@
     },
     "warnings": {"type": "array", "items": {"type": "string"}},
     "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "suppressed": {"type": "array", "items": {"$ref": "#/$defs/suppressed"}},
     "changes": {"type": "array", "items": {"$ref": "#/$defs/change"}},
     "ignored": {"$ref": "#/$defs/addresses"}
   }

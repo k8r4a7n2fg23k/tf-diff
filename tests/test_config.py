@@ -1,8 +1,11 @@
+from datetime import date
+
 import pytest
 
 from tfdiff.config import ENV_ENVIRONMENT, load
 from tfdiff.model.errors import ConfigError
 from tfdiff.model.findings import Confidence, Severity
+from tfdiff.model.settings import Suppression
 
 FILE = """
 environment: staging
@@ -17,6 +20,11 @@ rules:
     enabled: false
 ignore:
   - module.test.*
+"""
+SUPPRESS = """suppress:
+  - rule: replace-resource
+    resource: module.cache.main
+    reason: rebuilt nightly
 """
 
 
@@ -84,6 +92,17 @@ def test_file_settings_reach_the_model() -> None:
             "production_names.2: Live repeats an earlier entry",
         ),
         ("environment_tags: Stage\n", "environment_tags: Input should be a valid list"),
+        (SUPPRESS.replace("replace-resource", "replace-all"), r"suppress.0.rule: unknown rule"),
+        (
+            SUPPRESS.replace("    reason: rebuilt nightly\n", ""),
+            r"suppress.0.reason: Field required",
+        ),
+        (SUPPRESS.replace("rebuilt nightly", "' '"), r"suppress.0.reason: blank"),
+        (SUPPRESS.replace("module.cache.main", "''"), r"suppress.0.resource: blank"),
+        (SUPPRESS + SUPPRESS.removeprefix("suppress:\n"), "suppress.1: repeats an earlier entry"),
+        (SUPPRESS + "    until: soon\n", "suppress.0.until: Input should be a valid date"),
+        (SUPPRESS + "    until: 0\n", "suppress.0.until: Value error, a date like 2027-03-01"),
+        (SUPPRESS + "    scope: all\n", "suppress.0.scope: Extra inputs"),
     ],
     ids=[
         "rule",
@@ -102,6 +121,14 @@ def test_file_settings_reach_the_model() -> None:
         "duplicate-tag",
         "duplicate-name",
         "tags-not-a-list",
+        "suppress-unknown-rule",
+        "suppress-no-reason",
+        "suppress-blank-reason",
+        "suppress-blank-resource",
+        "suppress-duplicate",
+        "suppress-not-a-date",
+        "suppress-unix-time",
+        "suppress-typo",
     ],
 )
 def test_bad_config_is_config_error(text: str, message: str) -> None:
@@ -123,3 +150,19 @@ def test_environment_lists_replace_the_defaults() -> None:
     settings = load("environment_tags: [' Stage ', env_name]\nproduction_names: [PRD, Live]\n", {})
     assert settings.environment_tags == ("Stage", "env_name")
     assert settings.production_names == {"prd", "live"}
+
+
+@pytest.mark.parametrize("until", ["2027-03-01", "'2027-03-01'"], ids=["yaml-date", "quoted"])
+def test_suppressions_reach_the_model(until: str) -> None:
+    text = (
+        SUPPRESS.replace("module.cache.main", " module.cache.* ").replace(
+            "reason: rebuilt nightly", "reason: |\n      rebuilt\n      nightly"
+        )
+        + f"    until: {until}\n"
+    )
+    settings = load(text, {}, today=date(2027, 1, 1))
+    assert settings.suppress == (
+        Suppression("replace-resource", "module.cache.*", "rebuilt nightly", date(2027, 3, 1)),
+    )
+    assert settings.today == date(2027, 1, 1)
+    assert load("suppress:\n", {}).suppress == ()

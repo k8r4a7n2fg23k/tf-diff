@@ -1,5 +1,6 @@
 from collections import Counter
 from dataclasses import dataclass
+from datetime import date
 
 from tfdiff.model.diff import AttributeChange
 from tfdiff.model.findings import Confidence, Finding, Severity
@@ -37,6 +38,13 @@ class Assessment:
 
 
 @dataclass(frozen=True, slots=True)
+class Suppressed:
+    finding: Finding
+    reason: str
+    until: date | None
+
+
+@dataclass(frozen=True, slots=True)
 class Report:
     format_version: str
     terraform_version: str | None
@@ -46,6 +54,8 @@ class Report:
     assessments: tuple[Assessment, ...]
     findings: tuple[Finding, ...]
     ignored: tuple[str, ...]
+    # muted by the config: reported apart, never counted or failing `check`
+    suppressed: tuple[Suppressed, ...]
     warnings: tuple[str, ...]
 
 

@@ -1,5 +1,6 @@
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from datetime import date
 
 from tfdiff.model.findings import Confidence, Severity
 
@@ -7,6 +8,17 @@ from tfdiff.model.findings import Confidence, Severity
 ENVIRONMENT_TAGS = ("Environment", "env")
 # casefolded
 PRODUCTION_NAMES = frozenset({"production", "prod", "prd"})
+
+
+@dataclass(frozen=True, slots=True)
+class Suppression:
+    """One rule muted on matching resources, with the reason and the last day it holds."""
+
+    rule: str
+    # full address, `*` and `?` are wildcards, as in `ignore`
+    resource: str
+    reason: str
+    until: date | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,3 +33,6 @@ class Settings:
     severities: Mapping[str, Severity] = field(default_factory=dict[str, Severity])
     thresholds: Mapping[str, int] = field(default_factory=dict[str, int])
     ignore: tuple[str, ...] = ()
+    suppress: tuple[Suppression, ...] = ()
+    # cli.py passes the date in; None means no `until` has passed
+    today: date | None = None

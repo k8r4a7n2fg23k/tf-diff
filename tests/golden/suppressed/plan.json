@@ -1,0 +1,321 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.16.0",
+  "resource_changes": [
+    {
+      "address": "module.database.aws_db_instance.primary",
+      "module_address": "module.database",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "name": "primary",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "action_reason": "replace_because_cannot_update",
+      "change": {
+        "actions": ["delete", "create"],
+        "before": {
+          "id": "db-ORDERS0000000000000000000",
+          "identifier": "orders-db",
+          "address": "orders-db.abcdefghijkl.us-east-1.rds.amazonaws.com",
+          "endpoint": "orders-db.abcdefghijkl.us-east-1.rds.amazonaws.com:5432",
+          "engine": "postgres",
+          "instance_class": "db.r6g.large",
+          "storage_type": "gp2",
+          "allocated_storage": 200,
+          "publicly_accessible": false,
+          "storage_encrypted": true,
+          "multi_az": true,
+          "backup_retention_period": 7,
+          "password": "CANARY-db-old-password",
+          "tags": {"Environment": "production", "Service": "orders"}
+        },
+        "after": {
+          "identifier": "orders-db",
+          "engine": "postgres",
+          "instance_class": "db.r6g.large",
+          "storage_type": "io2",
+          "allocated_storage": "200",
+          "publicly_accessible": false,
+          "storage_encrypted": true,
+          "multi_az": true,
+          "backup_retention_period": 7,
+          "password": "CANARY-db-new-password",
+          "tags": {"Environment": "production", "Service": "orders"}
+        },
+        "after_unknown": {"id": true, "address": true, "endpoint": true, "tags": {}},
+        "before_sensitive": {"password": true, "tags": {}},
+        "after_sensitive": {"password": true, "tags": {}},
+        "replace_paths": [["storage_type"]]
+      }
+    },
+    {
+      "address": "module.api.aws_ecs_task_definition.api",
+      "module_address": "module.api",
+      "mode": "managed",
+      "type": "aws_ecs_task_definition",
+      "name": "api",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "family": "api",
+          "container_definitions": "[{\"name\":\"api\",\"environment\":[{\"name\":\"DB_HOST\",\"value\":\"orders-db\"}]}]",
+          "tags": {"Environment": "production"}
+        },
+        "after": {"family": "api", "tags": {"Environment": "production"}},
+        "after_unknown": {"container_definitions": true, "tags": {}},
+        "before_sensitive": {"tags": {}},
+        "after_sensitive": {"tags": {}}
+      }
+    },
+    {
+      "address": "module.api.aws_ecs_service.api",
+      "module_address": "module.api",
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "api",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "name": "api",
+          "desired_count": 6,
+          "task_definition": "arn:aws:ecs:us-east-1:123456789012:task-definition/api:41",
+          "tags": {"Environment": "production"}
+        },
+        "after": {"name": "api", "desired_count": 2, "tags": {"Environment": "production"}},
+        "after_unknown": {"task_definition": true, "tags": {}},
+        "before_sensitive": {"tags": {}},
+        "after_sensitive": {"tags": {}}
+      }
+    },
+    {
+      "address": "module.worker.aws_ecs_service.worker",
+      "module_address": "module.worker",
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "worker",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "name": "worker",
+          "desired_count": 3,
+          "task_definition": "arn:aws:ecs:us-east-1:123456789012:task-definition/worker:12",
+          "tags": {"Environment": "production"}
+        },
+        "after": {"name": "worker", "desired_count": "3", "tags": {"Environment": "production"}},
+        "after_unknown": {"task_definition": true, "tags": {}},
+        "before_sensitive": {"tags": {}},
+        "after_sensitive": {"tags": {}}
+      }
+    },
+    {
+      "address": "aws_security_group.bastion",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "bastion",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "id": "sg-0123456789abcdef0",
+          "name": "bastion",
+          "ingress": [
+            {"from_port": 443, "to_port": 443, "protocol": "tcp", "cidr_blocks": ["0.0.0.0/0"], "ipv6_cidr_blocks": []},
+            {"from_port": 22, "to_port": 22, "protocol": "tcp", "cidr_blocks": ["203.0.113.0/24"], "ipv6_cidr_blocks": []}
+          ],
+          "tags": {"Environment": "production"}
+        },
+        "after": {
+          "id": "sg-0123456789abcdef0",
+          "name": "bastion",
+          "ingress": [
+            {"from_port": 443, "to_port": 443, "protocol": "tcp", "cidr_blocks": ["0.0.0.0/0"], "ipv6_cidr_blocks": []},
+            {"from_port": 22, "to_port": 22, "protocol": "tcp", "cidr_blocks": ["0.0.0.0/0"], "ipv6_cidr_blocks": []}
+          ],
+          "tags": {"Environment": "production"}
+        },
+        "after_unknown": {"ingress": [{"cidr_blocks": [false], "ipv6_cidr_blocks": []}, {"cidr_blocks": [false], "ipv6_cidr_blocks": []}], "tags": {}},
+        "before_sensitive": {"ingress": [{"cidr_blocks": [false], "ipv6_cidr_blocks": []}, {"cidr_blocks": [false], "ipv6_cidr_blocks": []}], "tags": {}},
+        "after_sensitive": {"ingress": [{"cidr_blocks": [false], "ipv6_cidr_blocks": []}, {"cidr_blocks": [false], "ipv6_cidr_blocks": []}], "tags": {}}
+      }
+    },
+    {
+      "address": "module.analytics.aws_db_instance.reporting",
+      "module_address": "module.analytics",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "name": "reporting",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {"identifier": "reporting", "publicly_accessible": false, "tags": {"Environment": "production"}},
+        "after": {"identifier": "reporting", "publicly_accessible": true, "tags": {"Environment": "production"}},
+        "after_unknown": {"tags": {}},
+        "before_sensitive": {"tags": {}},
+        "after_sensitive": {"tags": {}}
+      }
+    },
+    {
+      "address": "aws_s3_bucket.audit_logs",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "audit_logs",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "action_reason": "delete_because_no_resource_config",
+      "change": {
+        "actions": ["delete"],
+        "before": {"bucket": "audit-logs.example.com", "tags": {"Environment": "production"}},
+        "after": null,
+        "after_unknown": {},
+        "before_sensitive": {"tags": {}},
+        "after_sensitive": false
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.web",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "name": "web",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "name": "web",
+          "min_size": 3,
+          "desired_capacity": 3,
+          "availability_zones": ["us-east-1a", "us-east-1b", "us-east-1c"],
+          "tags": {"Environment": "production"}
+        },
+        "after": {
+          "name": "web",
+          "min_size": 3,
+          "desired_capacity": 3,
+          "availability_zones": ["us-east-1a"],
+          "tags": {"Environment": "production"}
+        },
+        "after_unknown": {"availability_zones": [false], "tags": {}},
+        "before_sensitive": {"availability_zones": [false, false, false], "tags": {}},
+        "after_sensitive": {"availability_zones": [false], "tags": {}}
+      }
+    },
+    {
+      "address": "aws_lb.public",
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "public",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["update"],
+        "before": {"name": "public", "internal": false, "tags": {"Environment": "production", "Owner": "web"}},
+        "after": {"name": "public", "internal": false, "tags": {"Environment": "production", "Owner": "platform"}},
+        "after_unknown": {"tags": {}},
+        "before_sensitive": {"tags": {}},
+        "after_sensitive": {"tags": {}}
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.app[\"api\"]",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "app",
+      "index": "api",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["create"],
+        "before": null,
+        "after": {"name": "/ecs/api", "retention_in_days": 30, "tags": {"Environment": "production"}},
+        "after_unknown": {"arn": true, "id": true, "tags": {}},
+        "before_sensitive": false,
+        "after_sensitive": {"tags": {}}
+      }
+    },
+    {
+      "address": "aws_iam_role.app",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "app",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": ["no-op"],
+        "before": {"name": "app"},
+        "after": {"name": "app"},
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "data.aws_ami.base",
+      "mode": "data",
+      "type": "aws_ami",
+      "name": "base",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "action_reason": "read_because_config_unknown",
+      "change": {
+        "actions": ["read"],
+        "before": null,
+        "after": {"most_recent": true},
+        "after_unknown": {"id": true},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "configuration": {
+    "root_module": {
+      "resources": [
+        {"address": "aws_security_group.bastion", "mode": "managed", "type": "aws_security_group", "name": "bastion", "expressions": {"name": {"constant_value": "bastion"}}},
+        {"address": "aws_s3_bucket.audit_logs", "mode": "managed", "type": "aws_s3_bucket", "name": "audit_logs", "expressions": {}},
+        {
+          "address": "aws_autoscaling_group.web", "mode": "managed", "type": "aws_autoscaling_group", "name": "web",
+          "expressions": {"launch_template": [{"image_id": {"references": ["data.aws_ami.base.id", "data.aws_ami.base"]}}]},
+          "depends_on": ["aws_security_group.bastion"]
+        },
+        {"address": "aws_lb.public", "mode": "managed", "type": "aws_lb", "name": "public", "expressions": {"security_groups": {"references": ["aws_security_group.bastion.id", "aws_security_group.bastion"]}}},
+        {"address": "aws_cloudwatch_log_group.app", "mode": "managed", "type": "aws_cloudwatch_log_group", "name": "app", "for_each_expression": {"references": ["local.services"]}},
+        {"address": "aws_iam_role.app", "mode": "managed", "type": "aws_iam_role", "name": "app"},
+        {"address": "data.aws_ami.base", "mode": "data", "type": "aws_ami", "name": "base"}
+      ],
+      "module_calls": {
+        "database": {
+          "source": "./modules/database",
+          "module": {
+            "resources": [
+              {"address": "aws_db_instance.primary", "mode": "managed", "type": "aws_db_instance", "name": "primary", "expressions": {"storage_type": {"references": ["var.storage_type"]}, "password": {"references": ["var.db_password"]}}}
+            ],
+            "outputs": {"endpoint": {"expression": {"references": ["aws_db_instance.primary.endpoint", "aws_db_instance.primary"]}}}
+          }
+        },
+        "api": {
+          "source": "./modules/service",
+          "expressions": {"db_endpoint": {"references": ["module.database.endpoint", "module.database"]}},
+          "module": {
+            "resources": [
+              {"address": "aws_ecs_task_definition.api", "mode": "managed", "type": "aws_ecs_task_definition", "name": "api", "expressions": {"container_definitions": {"references": ["var.db_endpoint"]}}},
+              {"address": "aws_ecs_service.api", "mode": "managed", "type": "aws_ecs_service", "name": "api", "expressions": {"task_definition": {"references": ["aws_ecs_task_definition.api.arn", "aws_ecs_task_definition.api"]}}}
+            ]
+          }
+        },
+        "worker": {
+          "source": "./modules/worker",
+          "expressions": {"db_endpoint": {"references": ["module.database.endpoint", "module.database"]}},
+          "module": {
+            "resources": [
+              {"address": "aws_ecs_service.worker", "mode": "managed", "type": "aws_ecs_service", "name": "worker", "expressions": {"task_definition": {"references": ["var.db_endpoint"]}}}
+            ]
+          }
+        },
+        "analytics": {
+          "source": "./modules/analytics",
+          "depends_on": ["module.database"],
+          "module": {
+            "resources": [
+              {"address": "aws_db_instance.reporting", "mode": "managed", "type": "aws_db_instance", "name": "reporting"}
+            ]
+          }
+        }
+      }
+    }
+  }
+}

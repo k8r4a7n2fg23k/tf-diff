@@ -1,5 +1,5 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "tool": {
     "name": "tf-diff",
     "version": "0.3.0",
@@ -14,6 +14,7 @@
     "resources": 1,
     "changed": 1,
     "ignored": 0,
+    "suppressed": 0,
     "actions": {
       "update": 1
     },
@@ -32,6 +33,7 @@
     "no environment: nothing sets it and no resource has an environment tag (Environment, env), so production-only checks are off; set --environment"
   ],
   "findings": [],
+  "suppressed": [],
   "changes": [
     {
       "address": "aws_lb.web",

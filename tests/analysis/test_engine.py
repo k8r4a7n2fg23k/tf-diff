@@ -1,5 +1,6 @@
 import io
 import json
+from datetime import date
 from pathlib import Path
 from random import Random
 
@@ -13,7 +14,7 @@ from tfdiff.analysis.engine import analyze, environment, lookup
 from tfdiff.model.errors import InputError
 from tfdiff.model.findings import Severity
 from tfdiff.model.report import Report
-from tfdiff.model.settings import Settings
+from tfdiff.model.settings import Settings, Suppression
 from tfdiff.report import document, markdown, sarif, terminal
 from tfdiff.terraform.parser import parse
 
@@ -392,3 +393,126 @@ def test_with_three_keys_the_first_one_present_decides() -> None:
     )
     (change,) = parse(plan_text(raw)).changes
     assert environment(change, settings) == "dev"
+
+
+def _database(address: str = 'module.db.aws_db_instance.main["blue"]') -> str:
+    return plan_text(
+        resource_change(address, actions=("delete",), before={"tags": {"env": "prod"}}),
+        configuration=NO_CONFIG,
+    )
+
+
+def _muted(resource: str, until: date | None = None, today: date | None = None) -> Settings:
+    entry = Suppression("stateful-data-loss", resource, "snapshot taken", until)
+    return Settings(suppress=(entry,), today=today)
+
+
+@pytest.mark.parametrize(
+    "resource",
+    ['module.db.aws_db_instance.main["blue"]', "module.db.*", "module.db.*.main[?blue?]"],
+)
+def test_suppression_mutes_one_rule_on_matching_resources(resource: str) -> None:
+    report = analyze(parse(_database()), _muted(resource))
+    (assessment,) = report.assessments
+    assert [item.rule for item in report.findings] == ["destroy-production-resource"]
+    assert [item.rule for item in assessment.findings] == ["destroy-production-resource"]
+    assert [(muted.finding.rule, muted.reason) for muted in report.suppressed] == [
+        ("stateful-data-loss", "snapshot taken")
+    ]
+
+
+def test_suppression_leaves_other_resources_alone() -> None:
+    report = analyze(parse(_database("aws_db_instance.other")), _muted("module.db.*"))
+    assert report.suppressed == ()
+    assert {item.rule for item in report.findings} == {
+        "destroy-production-resource",
+        "stateful-data-loss",
+    }
+
+
+@pytest.mark.parametrize(
+    ("today", "is_muted"),
+    [(None, True), (date(2027, 3, 1), True), (date(2027, 3, 2), False)],
+    ids=["no-clock", "last-day", "day-after"],
+)
+def test_suppression_holds_through_until(today: date | None, is_muted: bool) -> None:
+    resource = "module.db.*"
+    report = analyze(parse(_database()), _muted(resource, date(2027, 3, 1), today))
+    assert len(report.suppressed) == (1 if is_muted else 0)
+    expiry = (
+        "suppression of stateful-data-loss on module.db.* expired on 2027-03-01: "
+        "its findings count again"
+    )
+    assert (expiry in report.warnings) is not is_muted
+    assert ("stateful-data-loss" in {item.rule for item in report.findings}) is not is_muted
+
+
+def test_a_resource_with_every_finding_suppressed_has_no_score() -> None:
+    entries = tuple(
+        Suppression(rule, "module.db.*", "decommissioned")
+        for rule in ("destroy-production-resource", "stateful-data-loss")
+    )
+    report = analyze(parse(_database()), Settings(suppress=entries))
+    (assessment,) = report.assessments
+    assert (report.findings, assessment.findings, assessment.score) == ((), (), None)
+    assert len(report.suppressed) == 2
+
+
+def _entry(resource: str, reason: str, until: date | None = None) -> Suppression:
+    return Suppression("stateful-data-loss", resource, reason, until)
+
+
+@pytest.mark.parametrize(
+    ("entries", "reason"),
+    [
+        (
+            (_entry("module.db.*", "old", date(2027, 1, 1)), _entry("module.db.*main*", "new")),
+            "new",
+        ),
+        ((_entry("module.db.*", "first"), _entry("module.db.*main*", "second")), "first"),
+    ],
+    ids=["expired-then-live", "two-live"],
+)
+def test_the_first_entry_in_force_wins(entries: tuple[Suppression, ...], reason: str) -> None:
+    settings = Settings(suppress=entries, today=date(2027, 6, 1))
+    report = analyze(parse(_database()), settings)
+    assert [muted.reason for muted in report.suppressed] == [reason]
+    assert not any("expired" in warning for warning in report.warnings)
+
+
+def test_an_expired_entry_warns_once_and_only_if_it_matched() -> None:
+    plan = plan_text(
+        *(
+            resource_change(address, actions=("delete",), before={"tags": {"env": "prod"}})
+            for address in ("module.db.aws_db_instance.a", "module.db.aws_db_instance.b")
+        ),
+        configuration=NO_CONFIG,
+    )
+    entries = (
+        _entry("module.db.*", "old", date(2027, 1, 1)),
+        _entry("aws_db_instance.gone", "old", date(2027, 1, 1)),
+    )
+    report = analyze(parse(plan), Settings(suppress=entries, today=date(2027, 6, 1)))
+    assert [warning for warning in report.warnings if "expired" in warning] == [
+        "suppression of stateful-data-loss on module.db.* expired on 2027-01-01: "
+        "its findings count again"
+    ]
+    assert len([item for item in report.findings if item.rule == "stateful-data-loss"]) == 2
+
+
+def test_expiry_warnings_are_sorted_by_rule_then_resource() -> None:
+    gone = date(2027, 1, 1)
+    entries = tuple(
+        Suppression(rule, resource, "old", gone)
+        for resource in ("module.db.*", "module.db.aws_*")
+        for rule in ("stateful-data-loss", "destroy-production-resource")
+    )
+    report = analyze(parse(_database()), Settings(suppress=entries, today=date(2027, 6, 1)))
+    assert [
+        warning.split(" expired")[0] for warning in report.warnings if "expired" in warning
+    ] == [
+        "suppression of destroy-production-resource on module.db.*",
+        "suppression of destroy-production-resource on module.db.aws_*",
+        "suppression of stateful-data-loss on module.db.*",
+        "suppression of stateful-data-loss on module.db.aws_*",
+    ]

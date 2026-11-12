@@ -1,5 +1,5 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "tool": {
     "name": "tf-diff",
     "version": "0.3.0",
@@ -14,6 +14,7 @@
     "resources": 54,
     "changed": 54,
     "ignored": 0,
+    "suppressed": 0,
     "actions": {
       "create": 17,
       "update": 24,
@@ -1264,6 +1265,7 @@
       ]
     }
   ],
+  "suppressed": [],
   "changes": [
     {
       "address": "aws_autoscaling_group.mixed_capacity",

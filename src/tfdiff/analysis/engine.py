@@ -8,8 +8,8 @@ from tfdiff.model.errors import InputError
 from tfdiff.model.findings import Finding, order
 from tfdiff.model.graph import blast_radius
 from tfdiff.model.plan import QUIET, Change, Plan
-from tfdiff.model.report import Assessment, Report
-from tfdiff.model.settings import Settings
+from tfdiff.model.report import Assessment, Report, Suppressed
+from tfdiff.model.settings import Settings, Suppression
 from tfdiff.model.text import shortlist
 from tfdiff.model.values import Attributes, Known
 from tfdiff.rules.registry import RULES, RULES_VERSION
@@ -23,8 +23,11 @@ def analyze(plan: Plan, settings: Settings) -> Report:
     rules = [rule for rule in RULES if rule.id not in settings.disabled]
     fallback, notes = plan_environment(plan, settings)
     patterns = [_glob(pattern) for pattern in settings.ignore]
+    muting = [(entry, _glob(entry.resource)) for entry in settings.suppress]
     assessments: list[Assessment] = []
     ignored: list[str] = []
+    suppressed: list[Suppressed] = []
+    expired: set[Suppression] = set()
     for change in plan.changes:
         if change.action in QUIET:
             continue
@@ -39,12 +42,21 @@ def analyze(plan: Plan, settings: Settings) -> Report:
             blast=blast_radius(plan.graph, change.address),
             settings=settings,
         )
-        findings = tuple(
-            sorted(
-                (_override(found, settings) for rule in rules for found in rule.evaluate(context)),
-                key=order,
-            )
+        raised = sorted(
+            (_override(found, settings) for rule in rules for found in rule.evaluate(context)),
+            key=order,
         )
+        kept: list[Finding] = []
+        for found in raised:
+            entries = _matching(found, muting)
+            # the first entry still in force wins; expired ones only speak when none is
+            live = next((entry for entry in entries if not _has_expired(entry, settings)), None)
+            if live is None:
+                expired.update(entries)
+                kept.append(found)
+            else:
+                suppressed.append(Suppressed(found, live.reason, live.until))
+        findings = tuple(kept)
         assessments.append(
             Assessment(
                 change=change,
@@ -72,7 +84,8 @@ def analyze(plan: Plan, settings: Settings) -> Report:
             )
         ),
         ignored=tuple(sorted(ignored)),
-        warnings=(*plan.warnings, *notes),
+        suppressed=tuple(sorted(suppressed, key=lambda muted: order(muted.finding))),
+        warnings=(*plan.warnings, *notes, *_expiry(expired)),
     )
 
 
@@ -189,6 +202,29 @@ def _conflicts(changes: list[Change], settings: Settings) -> tuple[str, ...]:
 def _glob(pattern: str) -> re.Pattern[str]:
     """Compile `*` / `?` as wildcards; brackets stay literal, addresses are full of them."""
     return re.compile(re.escape(pattern).replace(r"\*", ".*").replace(r"\?", "."))
+
+
+def _matching(
+    found: Finding, muting: list[tuple[Suppression, re.Pattern[str]]]
+) -> list[Suppression]:
+    """Entries that cover the finding, in config order."""
+    return [
+        entry
+        for entry, pattern in muting
+        if entry.rule == found.rule and pattern.fullmatch(found.address)
+    ]
+
+
+def _has_expired(entry: Suppression, settings: Settings) -> bool:
+    return entry.until is not None and settings.today is not None and settings.today > entry.until
+
+
+def _expiry(expired: set[Suppression]) -> list[str]:
+    return [
+        f"suppression of {entry.rule} on {entry.resource} expired on {entry.until}: "
+        "its findings count again"
+        for entry in sorted(expired, key=lambda entry: (entry.rule, entry.resource))
+    ]
 
 
 def _override(found: Finding, settings: Settings) -> Finding:

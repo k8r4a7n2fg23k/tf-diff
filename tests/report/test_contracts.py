@@ -16,8 +16,9 @@ from typer.testing import CliRunner
 from factories import GOLDEN, ROOT, plan_text, resource_change
 from tfdiff import cli
 from tfdiff.analysis.engine import analyze
-from tfdiff.config import ENV_ENVIRONMENT
+from tfdiff.config import ENV_ENVIRONMENT, FILENAME, load
 from tfdiff.model.findings import order
+from tfdiff.model.report import Suppressed
 from tfdiff.model.settings import Settings
 from tfdiff.report import document, markdown, sarif
 from tfdiff.terraform.parser import parse
@@ -57,6 +58,31 @@ CAPACITY = plan_text(
 DANGEROUS = plan_text(
     resource_change("aws_instance.logs", actions=("delete",), before={"bucket": "logs"})
 )
+MUTED = (
+    "environment: production\n"
+    "suppress:\n"
+    "  - rule: destroy-production-resource\n"
+    "    resource: aws_instance.logs\n"
+    "    reason: decommissioned"
+)
+
+
+def test_suppressed_findings_match_both_schemas() -> None:
+    case = GOLDEN / "suppressed"
+    settings = load((case / FILENAME).read_text(encoding="utf-8"), {})
+    report = analyze(parse((case / "plan.json").read_text(encoding="utf-8")), settings)
+    assert len(report.suppressed) == 2
+    rendered = json.loads(document.render(report))
+    assert [
+        error.message for error in Draft202012Validator(REPORT_SCHEMA).iter_errors(rendered)
+    ] == []
+    log = json.loads(sarif.render(report, "plan.json"))
+    assert [error.message for error in Draft4Validator(SARIF_SCHEMA).iter_errors(log)] == []
+    results = log["runs"][0]["results"]
+    # suppressed ones last, so they are the ones cut at GitHub's cap
+    marks = ["suppressions" in result for result in results]
+    assert marks == [False] * len(report.findings) + [True, True]
+    assert {result["suppressions"][0]["kind"] for result in results[-2:]} == {"external"}
 
 
 @pytest.mark.parametrize(
@@ -81,6 +107,22 @@ DANGEROUS = plan_text(
         (CAPACITY, None, ["--fail-on", "critical"], cli.Exit.SUCCESS),
         # click reports usage errors with 2; the README documents it next to invalid input
         (SAFE, None, ["--fail-on", "bogus"], cli.Exit.INVALID_INPUT),
+        (DANGEROUS, MUTED + "\n", [], cli.Exit.SUCCESS),
+        # the date comes from the clock in cli.py: 2000 is long gone
+        (DANGEROUS, MUTED + "\n    until: 2000-01-01\n", [], cli.Exit.POLICY_VIOLATION),
+        (DANGEROUS, MUTED + "\n    until: 2999-01-01\n", [], cli.Exit.SUCCESS),
+        (
+            DANGEROUS,
+            MUTED.replace("destroy-production-resource", "replace-resource") + "\n",
+            [],
+            cli.Exit.POLICY_VIOLATION,
+        ),
+        (
+            DANGEROUS,
+            MUTED.replace("decommissioned", "' '") + "\n",
+            [],
+            cli.Exit.CONFIGURATION_ERROR,
+        ),
     ],
     ids=[
         "safe",
@@ -96,6 +138,11 @@ DANGEROUS = plan_text(
         "flag-over-config",
         "flag-alone",
         "bad-flag-value",
+        "suppressed",
+        "suppression-expired",
+        "suppression-current",
+        "other-rule-suppressed",
+        "blank-reason",
     ],
 )
 def test_check_exit_codes(  # noqa: PLR0913, PLR0917  - parametrized case plus two fixtures
@@ -187,15 +234,19 @@ def test_sarif_keeps_the_most_severe_results_github_accepts() -> None:
         ),
     )
     report = analyze(parse(plan), Settings())
-    # 3 x 8334 = 25002: the two left out are high, every critical is kept
-    many = replace(report, findings=tuple(sorted(report.findings * 8334, key=order)))
+    # 3 x 8334 = 25002 + 1 suppressed: the suppressed critical goes first, then two high
+    muted = Suppressed(report.findings[0], "accepted", None)
+    many = replace(
+        report, findings=tuple(sorted(report.findings * 8334, key=order)), suppressed=(muted,)
+    )
     (run,) = json.loads(sarif.render(many, "plan.json"))["runs"]
     severities = Counter(result["properties"]["severity"] for result in run["results"])
     assert severities == {"critical": 8334, "high": 16666}
+    assert not any("suppressions" in result for result in run["results"])
     (notice,) = run["invocations"][0]["toolExecutionNotifications"]
     assert notice["message"]["text"] == (
-        "2 least severe finding(s) left out: GitHub rejects a run of more than 25000 results; "
-        "the JSON report has them all"
+        "3 finding(s) left out, suppressed ones first, then the least severe: GitHub rejects a "
+        "run of more than 25000 results; the JSON report has them all"
     )
     run["results"] = run["results"][:1]
     errors = Draft4Validator(SARIF_SCHEMA).iter_errors({"version": "2.1.0", "runs": [run]})
