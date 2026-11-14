@@ -162,6 +162,10 @@ def _parse(text: str | None, source: str) -> FileConfig:
         mark = getattr(error, "problem_mark", None)
         where = f" at line {mark.line + 1}" if mark is not None else ""
         raise ConfigError(f"{source}: not valid YAML{where}") from None
+    except ValueError:
+        # the date constructor: `until: 2027-02-30` looks like a date and isn't one; its
+        # message differs between Python versions, so it stays out of ours
+        raise ConfigError(f"{source}: not valid YAML: a date that does not exist") from None
     if document is None:
         return FileConfig()
     if not isinstance(document, dict):
