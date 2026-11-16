@@ -9,7 +9,7 @@ sets that attribute. Computed attributes the config doesn't set (provider defaul
 
 By default `check` only fails on high confidence: an unknown value is worth a look, not a blocked
 merge. `--fail-on-confidence low` changes that. Severities and on/off are per rule in
-`.tf-diff.yaml`.
+`.tf-diff.yaml`; a single rule can also be suppressed on chosen resources (see the README).
 
 ## Environment
 

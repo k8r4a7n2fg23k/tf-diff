@@ -90,10 +90,20 @@ rules:
     enabled: false
 ignore:
   - module.sandbox.*        # full address; * and ? are wildcards, [ ] is literal
+suppress:
+  - rule: replace-resource
+    resource: module.database.aws_db_instance.primary   # same wildcards as ignore
+    reason: blue/green cutover, approved in CHG-1234     # required
+    until: 2027-03-01                                    # optional, last day it holds
 ```
 
 Unknown keys and rule ids fail with exit 3, so a typo can't quietly turn a rule off. Same for an
-empty `environment_tags` / `production_names` or duplicates in them.
+empty `environment_tags` / `production_names`, duplicates in them, or a date that doesn't exist.
+
+`ignore` drops a resource from the report entirely. `suppress` mutes one rule on matching
+resources: the finding doesn't count and doesn't fail `check`, but it's still listed, with its
+reason, in a separate "Suppressed" block in every format. Once `until` has passed, the finding is
+back and the report warns that the suppression expired.
 
 ## CI
 
