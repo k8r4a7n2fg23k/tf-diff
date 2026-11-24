@@ -1,0 +1,66 @@
+Terraform Semantic Diff
+────────────────────────────────────────────────────────────────────────
+Environment   not set (resource tags decide)
+Version       Terraform or OpenTofu 1.13.10 (plan format 1.2)
+Resources     12 inspected, 7 changed, 0 ignored
+Changes       2 update, 4 delete, 1 replace
+Risk          0 critical, 0 high, 2 medium, 1 low, 1 info
+warning: no environment: nothing sets it and no resource has an environment tag (Environment, env), so production-only checks are off; set --environment
+────────────────────────────────────────────────────────────────────────
+
+MEDIUM   module.database.terraform_data.primary
+  action        REPLACE (delete, create)
+  why           the provider cannot update it in place
+  why           triggers_replace forces replacement
+  why           2 attribute(s) change: input.password, input.subnets[2]
+  why           2 attribute(s) known only after apply
+  blast radius  4 direct, 2 indirect
+  score         55/100, confidence high
+                +25 medium finding (wide-blast-radius)
+                +15 replace: the old object is destroyed
+                +15 6 dependent resource(s)
+  MEDIUM   wide-blast-radius  Wide blast radius
+             6 resources depend on it (threshold 5)
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 4 direct, 2 indirect
+             affected: module.app.terraform_data.api, module.app.terraform_data.worker[0], module.app.terraform_data.worker[1], module.app.terraform_data.worker[2], module.app.terraform_data.autoscaler, module.app.terraform_data.deployment
+  LOW      replace-resource  Resource replaced
+             triggers_replace cannot be updated in place
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 4 direct, 2 indirect
+             order: destroy before create: unavailable until the new one is up
+             triggers_replace: "gp2" -> "gp3"
+  INFO     sensitive-value-changed  Sensitive value changes
+             a secret or credential changes; dependents must pick up the new value
+             confidence high
+             action: REPLACE (delete, create)
+             environment: not set
+             dependents: 4 direct, 2 indirect
+             paths: input.password
+
+MEDIUM   module.network.terraform_data.subnet["zone-c"]
+  action        DELETE
+  why           its for_each key is gone
+  blast radius  1 direct, 6 indirect
+  score         55/100, confidence high
+                +25 medium finding (wide-blast-radius)
+                +15 delete: the old object is destroyed
+                +15 7 dependent resource(s)
+  MEDIUM   wide-blast-radius  Wide blast radius
+             7 resources depend on it (threshold 5)
+             confidence high
+             action: DELETE
+             environment: not set
+             dependents: 1 direct, 6 indirect
+             affected: module.database.terraform_data.primary, module.app.terraform_data.api, module.app.terraform_data.autoscaler, module.app.terraform_data.deployment, module.app.terraform_data.worker[0], module.app.terraform_data.worker[1], module.app.terraform_data.worker[2]
+
+Other changes
+  update   module.app.terraform_data.api
+  update   module.app.terraform_data.worker[0]
+  delete   module.app.terraform_data.worker[1]
+  delete   module.app.terraform_data.worker[2]
+  delete   terraform_data.cache[0]

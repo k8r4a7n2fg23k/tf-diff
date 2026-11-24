@@ -149,10 +149,26 @@ def _parse(text: str) -> Plan:
     return Plan(
         format_version=raw.format_version,
         terraform_version=raw.terraform_version,
+        tool=_tool(changes),
         changes=changes,
         graph=graph,
         warnings=tuple(warnings),
     )
+
+
+def _tool(changes: tuple[Change, ...]) -> str | None:
+    """Which binary wrote the plan. The JSON never says; the provider registry does.
+
+    OpenTofu resolves `hashicorp/aws` to its own registry, Terraform to registry.terraform.io.
+    Versions overlap (both ship 1.6-1.13), and built-in providers like terraform_data are
+    `terraform.io/builtin/...` in both, so a plan of those alone stays unknown.
+    """
+    hosts = {change.resource.provider.split("/", 1)[0] for change in changes}
+    if "registry.opentofu.org" in hosts:
+        return "OpenTofu"
+    if "registry.terraform.io" in hosts:
+        return "Terraform"
+    return None
 
 
 def _finite(text: str) -> float:

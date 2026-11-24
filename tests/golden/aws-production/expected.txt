@@ -1,7 +1,7 @@
 Terraform Semantic Diff
 ────────────────────────────────────────────────────────────────────────
 Environment   production
-Terraform     1.16.0 (plan format 1.2)
+Version       Terraform 1.16.0 (plan format 1.2)
 Resources     12 inspected, 10 changed, 0 ignored
 Changes       1 create, 7 update, 1 delete, 1 replace
 Risk          5 critical, 2 high, 1 medium, 0 low, 1 info

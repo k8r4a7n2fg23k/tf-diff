@@ -48,6 +48,7 @@ class Suppressed:
 class Report:
     format_version: str
     terraform_version: str | None
+    tool: str | None
     environment: str | None
     rules_version: str
     inspected: int

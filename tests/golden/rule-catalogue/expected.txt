@@ -1,7 +1,7 @@
 Terraform Semantic Diff
 ────────────────────────────────────────────────────────────────────────
 Environment   not set (resource tags decide)
-Terraform     1.16.0 (plan format 1.2)
+Version       Terraform 1.16.0 (plan format 1.2)
 Resources     54 inspected, 54 changed, 0 ignored
 Changes       17 create, 24 update, 4 delete, 8 replace, 1 forget
 Risk          16 critical, 21 high, 2 medium, 7 low, 1 info

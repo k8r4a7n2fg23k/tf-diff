@@ -1,7 +1,7 @@
 Terraform Semantic Diff
 ────────────────────────────────────────────────────────────────────────
 Environment   not set (resource tags decide)
-Terraform     1.99.0 (plan format 1.9)
+Version       Terraform 1.99.0 (plan format 1.9)
 Resources     1 inspected, 1 changed, 0 ignored
 Changes       1 update
 Risk          0 critical, 0 high, 0 medium, 0 low, 0 info

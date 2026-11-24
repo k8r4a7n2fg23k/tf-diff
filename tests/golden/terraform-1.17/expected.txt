@@ -1,7 +1,7 @@
 Terraform Semantic Diff
 ────────────────────────────────────────────────────────────────────────
 Environment   production
-Terraform     1.17.1 (plan format 1.2)
+Version       Terraform or OpenTofu 1.17.1 (plan format 1.2)
 Resources     12 inspected, 7 changed, 0 ignored
 Changes       2 update, 4 delete, 1 replace
 Risk          4 critical, 0 high, 3 medium, 0 low, 1 info

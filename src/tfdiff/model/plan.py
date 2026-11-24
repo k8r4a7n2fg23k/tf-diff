@@ -62,6 +62,8 @@ class Change:
 class Plan:
     format_version: str
     terraform_version: str | None
+    # "Terraform", "OpenTofu", or None when the plan does not say
+    tool: str | None
     changes: tuple[Change, ...]
     graph: Graph
     warnings: tuple[str, ...]

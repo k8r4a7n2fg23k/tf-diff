@@ -1,0 +1,585 @@
+{
+  "schema_version": "2",
+  "tool": {
+    "name": "tf-diff",
+    "version": "0.4.0",
+    "rules_version": "1"
+  },
+  "plan": {
+    "format_version": "1.2",
+    "terraform_version": "1.13.10"
+  },
+  "environment": null,
+  "summary": {
+    "resources": 12,
+    "changed": 7,
+    "ignored": 0,
+    "suppressed": 0,
+    "actions": {
+      "update": 2,
+      "delete": 4,
+      "replace": 1
+    },
+    "risk": {
+      "critical": 0,
+      "high": 0,
+      "medium": 2,
+      "low": 1,
+      "info": 1
+    }
+  },
+  "warnings": [
+    "no environment: nothing sets it and no resource has an environment tag (Environment, env), so production-only checks are off; set --environment"
+  ],
+  "findings": [
+    {
+      "rule": "wide-blast-radius",
+      "severity": "medium",
+      "resource": "module.database.terraform_data.primary",
+      "title": "Wide blast radius",
+      "reason": "6 resources depend on it (threshold 5)",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "not set"
+        },
+        {
+          "label": "dependents",
+          "text": "4 direct, 2 indirect"
+        },
+        {
+          "label": "affected",
+          "text": "module.app.terraform_data.api, module.app.terraform_data.worker[0], module.app.terraform_data.worker[1], module.app.terraform_data.worker[2], module.app.terraform_data.autoscaler, module.app.terraform_data.deployment"
+        }
+      ]
+    },
+    {
+      "rule": "wide-blast-radius",
+      "severity": "medium",
+      "resource": "module.network.terraform_data.subnet[\"zone-c\"]",
+      "title": "Wide blast radius",
+      "reason": "7 resources depend on it (threshold 5)",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "DELETE"
+        },
+        {
+          "label": "environment",
+          "text": "not set"
+        },
+        {
+          "label": "dependents",
+          "text": "1 direct, 6 indirect"
+        },
+        {
+          "label": "affected",
+          "text": "module.database.terraform_data.primary, module.app.terraform_data.api, module.app.terraform_data.autoscaler, module.app.terraform_data.deployment, module.app.terraform_data.worker[0], module.app.terraform_data.worker[1], module.app.terraform_data.worker[2]"
+        }
+      ]
+    },
+    {
+      "rule": "replace-resource",
+      "severity": "low",
+      "resource": "module.database.terraform_data.primary",
+      "title": "Resource replaced",
+      "reason": "triggers_replace cannot be updated in place",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "not set"
+        },
+        {
+          "label": "dependents",
+          "text": "4 direct, 2 indirect"
+        },
+        {
+          "label": "order",
+          "text": "destroy before create: unavailable until the new one is up"
+        },
+        {
+          "label": "triggers_replace",
+          "text": "\"gp2\" -> \"gp3\""
+        }
+      ]
+    },
+    {
+      "rule": "sensitive-value-changed",
+      "severity": "info",
+      "resource": "module.database.terraform_data.primary",
+      "title": "Sensitive value changes",
+      "reason": "a secret or credential changes; dependents must pick up the new value",
+      "confidence": "high",
+      "evidence": [
+        {
+          "label": "action",
+          "text": "REPLACE (delete, create)"
+        },
+        {
+          "label": "environment",
+          "text": "not set"
+        },
+        {
+          "label": "dependents",
+          "text": "4 direct, 2 indirect"
+        },
+        {
+          "label": "paths",
+          "text": "input.password"
+        }
+      ]
+    }
+  ],
+  "suppressed": [],
+  "changes": [
+    {
+      "address": "module.app.terraform_data.api",
+      "type": "terraform_data",
+      "mode": "managed",
+      "provider": "terraform.io/builtin/terraform",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": null,
+      "why": [
+        "1 attribute(s) change: input.release",
+        "2 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "input.db",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "c598f2f1-2295-9b0e-dad3-b492715faa2d"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "input.release",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "v1"
+          },
+          "after": {
+            "state": "known",
+            "value": "v2"
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "output.db",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "c598f2f1-2295-9b0e-dad3-b492715faa2d"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "output.release",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "v1"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.database.terraform_data.primary"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.app.terraform_data.deployment"
+        ],
+        "indirect": [
+          "module.app.terraform_data.autoscaler"
+        ]
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.app.terraform_data.worker[0]",
+      "type": "terraform_data",
+      "mode": "managed",
+      "provider": "terraform.io/builtin/terraform",
+      "deposed": null,
+      "action": "update",
+      "actions": [
+        "update"
+      ],
+      "environment": null,
+      "why": [
+        "1 attribute(s) change: input.release",
+        "2 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "input.db",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "c598f2f1-2295-9b0e-dad3-b492715faa2d"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "input.release",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "v1"
+          },
+          "after": {
+            "state": "known",
+            "value": "v2"
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "output.db",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "c598f2f1-2295-9b0e-dad3-b492715faa2d"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "output.release",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "v1"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        }
+      ],
+      "dependencies": [
+        "module.database.terraform_data.primary"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.app.terraform_data.worker[1]",
+      "type": "terraform_data",
+      "mode": "managed",
+      "provider": "terraform.io/builtin/terraform",
+      "deposed": null,
+      "action": "delete",
+      "actions": [
+        "delete"
+      ],
+      "environment": null,
+      "why": [
+        "its count index is out of range now"
+      ],
+      "attributes": [],
+      "dependencies": [
+        "module.database.terraform_data.primary"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.app.terraform_data.worker[2]",
+      "type": "terraform_data",
+      "mode": "managed",
+      "provider": "terraform.io/builtin/terraform",
+      "deposed": null,
+      "action": "delete",
+      "actions": [
+        "delete"
+      ],
+      "environment": null,
+      "why": [
+        "its count index is out of range now"
+      ],
+      "attributes": [],
+      "dependencies": [
+        "module.database.terraform_data.primary"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    },
+    {
+      "address": "module.database.terraform_data.primary",
+      "type": "terraform_data",
+      "mode": "managed",
+      "provider": "terraform.io/builtin/terraform",
+      "deposed": null,
+      "action": "replace",
+      "actions": [
+        "delete",
+        "create"
+      ],
+      "environment": null,
+      "why": [
+        "the provider cannot update it in place",
+        "triggers_replace forces replacement",
+        "2 attribute(s) change: input.password, input.subnets[2]",
+        "2 attribute(s) known only after apply"
+      ],
+      "attributes": [
+        {
+          "path": "id",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "c598f2f1-2295-9b0e-dad3-b492715faa2d"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "input.password",
+          "kind": "sensitive",
+          "before": {
+            "state": "sensitive",
+            "value": null
+          },
+          "after": {
+            "state": "sensitive",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "input.subnets[2]",
+          "kind": "removed",
+          "before": {
+            "state": "known",
+            "value": "9c88b558-6043-d8ef-9a7f-37e835206093"
+          },
+          "after": {
+            "state": "null",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "output.password",
+          "kind": "unknown",
+          "before": {
+            "state": "sensitive",
+            "value": null
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "output.subnets[0]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "7182f9d2-2652-4fcd-699e-a319c4667adb"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "output.subnets[1]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "c40f4123-7626-b93f-6f48-ca55a21665d5"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "output.subnets[2]",
+          "kind": "unknown",
+          "before": {
+            "state": "known",
+            "value": "9c88b558-6043-d8ef-9a7f-37e835206093"
+          },
+          "after": {
+            "state": "unknown",
+            "value": null
+          },
+          "forces_replacement": false
+        },
+        {
+          "path": "triggers_replace",
+          "kind": "modified",
+          "before": {
+            "state": "known",
+            "value": "gp2"
+          },
+          "after": {
+            "state": "known",
+            "value": "gp3"
+          },
+          "forces_replacement": true
+        }
+      ],
+      "dependencies": [
+        "module.network.terraform_data.subnet[\"zone-a\"]",
+        "module.network.terraform_data.subnet[\"zone-b\"]",
+        "module.network.terraform_data.subnet[\"zone-c\"]"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.app.terraform_data.api",
+          "module.app.terraform_data.worker[0]",
+          "module.app.terraform_data.worker[1]",
+          "module.app.terraform_data.worker[2]"
+        ],
+        "indirect": [
+          "module.app.terraform_data.autoscaler",
+          "module.app.terraform_data.deployment"
+        ]
+      },
+      "score": {
+        "value": 55,
+        "confidence": "high",
+        "factors": [
+          "+25 medium finding (wide-blast-radius)",
+          "+15 replace: the old object is destroyed",
+          "+15 6 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "wide-blast-radius",
+        "replace-resource",
+        "sensitive-value-changed"
+      ]
+    },
+    {
+      "address": "module.network.terraform_data.subnet[\"zone-c\"]",
+      "type": "terraform_data",
+      "mode": "managed",
+      "provider": "terraform.io/builtin/terraform",
+      "deposed": null,
+      "action": "delete",
+      "actions": [
+        "delete"
+      ],
+      "environment": null,
+      "why": [
+        "its for_each key is gone"
+      ],
+      "attributes": [],
+      "dependencies": [
+        "module.network.terraform_data.vpc"
+      ],
+      "blast_radius": {
+        "direct": [
+          "module.database.terraform_data.primary"
+        ],
+        "indirect": [
+          "module.app.terraform_data.api",
+          "module.app.terraform_data.autoscaler",
+          "module.app.terraform_data.deployment",
+          "module.app.terraform_data.worker[0]",
+          "module.app.terraform_data.worker[1]",
+          "module.app.terraform_data.worker[2]"
+        ]
+      },
+      "score": {
+        "value": 55,
+        "confidence": "high",
+        "factors": [
+          "+25 medium finding (wide-blast-radius)",
+          "+15 delete: the old object is destroyed",
+          "+15 7 dependent resource(s)"
+        ]
+      },
+      "findings": [
+        "wide-blast-radius"
+      ]
+    },
+    {
+      "address": "terraform_data.cache[0]",
+      "type": "terraform_data",
+      "mode": "managed",
+      "provider": "terraform.io/builtin/terraform",
+      "deposed": null,
+      "action": "delete",
+      "actions": [
+        "delete"
+      ],
+      "environment": null,
+      "why": [
+        "its count index is out of range now"
+      ],
+      "attributes": [],
+      "dependencies": [
+        "module.network.terraform_data.vpc"
+      ],
+      "blast_radius": {
+        "direct": [],
+        "indirect": []
+      },
+      "score": null,
+      "findings": []
+    }
+  ],
+  "ignored": []
+}

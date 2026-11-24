@@ -74,6 +74,7 @@ def analyze(plan: Plan, settings: Settings) -> Report:
     return Report(
         format_version=plan.format_version,
         terraform_version=plan.terraform_version,
+        tool=plan.tool,
         environment=fallback,
         rules_version=RULES_VERSION,
         inspected=len(plan.changes),

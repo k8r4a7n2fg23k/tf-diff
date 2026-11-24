@@ -764,3 +764,38 @@ def test_no_locals_no_warning() -> None:
     configuration = {"root_module": {"resources": [_resource("aws_x.a", "var.v")]}}
     raw = resource_change("aws_x.a", actions=("create",), after={})
     assert parse(plan_text(raw, configuration=configuration)).warnings == ()
+
+
+@pytest.mark.parametrize(
+    ("providers", "tool"),
+    [
+        (["registry.opentofu.org/hashicorp/aws"], "OpenTofu"),
+        (["registry.terraform.io/hashicorp/aws"], "Terraform"),
+        # registry.opentofu.org shows up by default only under tofu; an explicit source fools it
+        (
+            ["registry.terraform.io/hashicorp/aws", "registry.opentofu.org/hashicorp/aws"],
+            "OpenTofu",
+        ),
+        (["terraform.io/builtin/terraform"], None),
+        ([], None),
+    ],
+    ids=["opentofu", "terraform", "mixed", "builtin", "empty"],
+)
+def test_the_provider_registry_tells_the_tool(providers: list[str], tool: str | None) -> None:
+    changes = [
+        {**resource_change(f"aws_instance.n{index}"), "provider_name": provider}
+        for index, provider in enumerate(providers)
+    ]
+    assert parse(plan_text(*changes)).tool == tool
+
+
+def test_recorded_opentofu_plan_parses_like_terraform() -> None:
+    tofu = parse((GOLDEN / "opentofu-1.13" / "plan.json").read_text(encoding="utf-8"))
+    terraform = parse((GOLDEN / "terraform-1.17" / "plan.json").read_text(encoding="utf-8"))
+    assert tofu.terraform_version == "1.13.10"
+    assert [change.address for change in tofu.changes] == [
+        change.address for change in terraform.changes
+    ]
+    assert [change.action for change in tofu.changes] == [
+        change.action for change in terraform.changes
+    ]

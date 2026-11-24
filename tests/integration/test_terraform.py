@@ -1,6 +1,6 @@
-"""Real terraform on examples/production-simulation (terraform_data only: no network, no cloud).
+"""Real terraform and tofu on examples/production-simulation (terraform_data only: no network).
 
-UPDATE_GOLDEN=1 also records the plan as tests/golden/terraform-<major.minor>/plan.json.
+UPDATE_GOLDEN=1 also records the plan as tests/golden/{terraform,opentofu}-<major.minor>/plan.json.
 """
 
 import json
@@ -17,18 +17,15 @@ from tfdiff.model.settings import Settings
 from tfdiff.terraform.parser import parse
 
 EXAMPLE = ROOT.parent / "examples" / "production-simulation"
-TERRAFORM = shutil.which("terraform")
+# binary -> golden directory prefix; both read the same plan JSON (format 1.2)
+BINARIES = {"terraform": "terraform", "tofu": "opentofu"}
 
-pytestmark = [
-    pytest.mark.terraform,
-    pytest.mark.skipif(TERRAFORM is None, reason="terraform is not installed"),
-]
+pytestmark = pytest.mark.terraform
 
 
-def _run(workdir: Path, *args: str) -> str:
-    assert TERRAFORM is not None
+def _run(binary: str, workdir: Path, *args: str) -> str:
     done = subprocess.run(  # noqa: S603  - fixed binary, fixed arguments
-        [TERRAFORM, *args],
+        [binary, *args],
         cwd=workdir,
         capture_output=True,
         text=True,
@@ -40,17 +37,22 @@ def _run(workdir: Path, *args: str) -> str:
     return done.stdout
 
 
-@pytest.fixture(scope="module")
-def recorded(tmp_path_factory: pytest.TempPathFactory) -> str:
-    workdir = tmp_path_factory.mktemp("example")
+@pytest.fixture(scope="module", params=sorted(BINARIES))
+def recorded(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory) -> str:
+    name: str = request.param
+    binary = shutil.which(name)
+    if binary is None:
+        pytest.skip(f"{name} is not installed")
+    workdir = tmp_path_factory.mktemp(name)
     shutil.copytree(EXAMPLE, workdir, dirs_exist_ok=True)
-    _run(workdir, "init", "-input=false")
-    _run(workdir, "apply", "-input=false", "-auto-approve", "-var-file=baseline.tfvars")
-    _run(workdir, "plan", "-input=false", "-var-file=dangerous.tfvars", "-out=tfplan")
-    text = _run(workdir, "show", "-json", "tfplan")
+    _run(binary, workdir, "init", "-input=false")
+    _run(binary, workdir, "apply", "-input=false", "-auto-approve", "-var-file=baseline.tfvars")
+    _run(binary, workdir, "plan", "-input=false", "-var-file=dangerous.tfvars", "-out=tfplan")
+    text = _run(binary, workdir, "show", "-json", "tfplan")
     if os.environ.get("UPDATE_GOLDEN"):
-        version = json.loads(_run(workdir, "version", "-json"))["terraform_version"]
-        target = GOLDEN / f"terraform-{'.'.join(version.split('.')[:2])}" / "plan.json"
+        # tofu names its version `terraform_version` too
+        version = json.loads(_run(binary, workdir, "version", "-json"))["terraform_version"]
+        target = GOLDEN / f"{BINARIES[name]}-{'.'.join(version.split('.')[:2])}" / "plan.json"
         target.parent.mkdir(exist_ok=True)
         target.write_text(json.dumps(json.loads(text), indent=2) + "\n", encoding="utf-8")
     return text

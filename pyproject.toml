@@ -136,7 +136,7 @@ testpaths = ["tests"]
 pythonpath = ["tests"]
 addopts = ["-q", "--strict-markers", "--strict-config", "--import-mode=importlib"]
 xfail_strict = true
-markers = ["terraform: runs the real terraform binary"]
+markers = ["terraform: runs the real terraform / tofu binary"]
 
 [tool.coverage.run]
 branch = true

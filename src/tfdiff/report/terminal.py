@@ -45,7 +45,8 @@ def render(console: Console, report: Report) -> None:
     _out(console, LINE)
     _row(console, "Environment", report.environment or "not set (resource tags decide)", 0)
     version = report.terraform_version or "unknown"
-    _row(console, "Terraform", f"{version} (plan format {report.format_version})", 0)
+    tool = report.tool or "Terraform or OpenTofu"
+    _row(console, "Version", f"{tool} {version} (plan format {report.format_version})", 0)
     _row(
         console,
         "Resources",

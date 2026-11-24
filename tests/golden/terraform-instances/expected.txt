@@ -1,7 +1,7 @@
 Terraform Semantic Diff
 ────────────────────────────────────────────────────────────────────────
 Environment   not set (resource tags decide)
-Terraform     1.16.6 (plan format 1.2)
+Version       Terraform or OpenTofu 1.16.6 (plan format 1.2)
 Resources     15 inspected, 5 changed, 0 ignored
 Changes       3 update, 2 replace
 Risk          0 critical, 0 high, 1 medium, 2 low, 0 info
