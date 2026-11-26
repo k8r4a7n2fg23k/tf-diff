@@ -3,6 +3,13 @@
 `RULES_VERSION` (in `tf-diff version`) changes when a rule's logic or severity changes, and the
 JSON report's `schema_version` only on a breaking change to its shape. Both are noted here.
 
+## 0.5.0 (2026-11-26)
+
+- OpenTofu: plans from `tofu show -json` are read the same way as Terraform's. Checked on
+  OpenTofu 1.13.
+- The report header now says what made the plan, Terraform or OpenTofu. It's taken from the
+  provider registry; a plan with built-in providers only shows "Terraform or OpenTofu".
+
 ## 0.4.0 (2026-11-16)
 
 - `suppress` in the config mutes one rule on one resource or a group of them, instead of dropping

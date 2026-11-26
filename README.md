@@ -1,7 +1,8 @@
 # tf-diff
 
-Reads `terraform show -json` and tells you what a plan actually does: which attribute forces a
-replace, what depends on the resource, and whether you're about to lose data in prod.
+Reads `terraform show -json` (or `tofu show -json`) and tells you what a plan actually does:
+which attribute forces a replace, what depends on the resource, and whether you're about to lose
+data in prod.
 
 ```
 $ tf-diff analyze tfplan.json
@@ -9,7 +10,7 @@ $ tf-diff analyze tfplan.json
 Terraform Semantic Diff
 ────────────────────────────────────────────────────────────────────────
 Environment   production
-Terraform     1.16.0 (plan format 1.2)
+Version       Terraform 1.16.0 (plan format 1.2)
 Resources     12 inspected, 10 changed, 0 ignored
 Changes       1 create, 7 update, 1 delete, 1 replace
 Risk          5 critical, 2 high, 1 medium, 0 low, 1 info
@@ -48,6 +49,10 @@ uv sync
 terraform plan -out=tfplan && terraform show -json tfplan > tfplan.json
 uv run tf-diff analyze tfplan.json --environment production
 ```
+
+OpenTofu works the same way: `tofu plan -out=tfplan && tofu show -json tfplan > tfplan.json`.
+The report header says which one made the plan. It can tell from the provider registry, so a plan
+that only uses built-in providers (like `terraform_data`) shows "Terraform or OpenTofu".
 
 ```
 tf-diff analyze PLAN [-f terminal|json|markdown|sarif]     full report, always exits 0
@@ -194,7 +199,7 @@ The three plans are recorded in `tests/golden/moto-*`.
 
 ```bash
 make check                     # ruff, mypy --strict, import-linter, test gate, pytest + coverage, licenses
-uv run pytest -m terraform     # runs the real terraform binary on examples/
+uv run pytest -m terraform     # runs real terraform and tofu (whichever is installed) on examples/
 UPDATE_GOLDEN=1 uv run pytest tests/integration tests/golden   # re-record plans and golden output
 uv run python scripts/catalogue_plan.py   # rebuild the rule-catalogue plan
 make mutate                    # mutation testing, Linux or WSL only (mutmut needs fork)

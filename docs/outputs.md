@@ -9,8 +9,9 @@ every format still lists them, with the reason and the `until` date.
 
 ## Terminal (`-f terminal`, default)
 
-For people. Resources with findings first, worst first, then a "Suppressed" block and
-"Other changes".
+For people. The header says what made the plan (Terraform, OpenTofu, or "Terraform or OpenTofu"
+when the plan only uses built-in providers). Then resources with findings, worst first, a
+"Suppressed" block, and "Other changes".
 
 ## JSON (`-f json`)
 
@@ -21,7 +22,7 @@ version. It's `"2"` since 0.4.0, which added `suppressed`.
 ```json
 {
   "schema_version": "2",
-  "tool": {"name": "tf-diff", "version": "0.4.0", "rules_version": "1"},
+  "tool": {"name": "tf-diff", "version": "0.5.0", "rules_version": "1"},
   "plan": {"format_version": "1.2", "terraform_version": "1.16.0"},
   "environment": "production",
   "summary": {"resources": 12, "changed": 10, "ignored": 0, "suppressed": 1,
